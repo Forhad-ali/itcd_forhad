@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Viewer Dashboard{% endblock %}
+{% block content %}
+<h2 class="mb-4">👀 Viewer Dashboard</h2>
+<div class="row g-4">
+  <div class="col-md-12">
+    <div class="card dashboard-card shadow-sm border-0">
+      <div class="card-body text-center">
+        <h5 class="card-title">📄 Ticket Viewer</h5>
+        <p class="card-text">Browse and read all tickets.</p>
+        <a href="{% url 'ticket_list' %}" class="btn btn-secondary">View Tickets</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

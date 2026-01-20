@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">All Equipment Entries</h2>
+
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Facility Name</th>
+                <th>System Name</th>
+                <th>Equipment Name</th>
+                <th>Quantity</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in entries %}
+            <tr>
+                <td>{{ entry.facility_name }}</td>
+                <td>{{ entry.system_name }}</td>
+                <td>{{ entry.equipment_name }}</td>
+                <td>{{ entry.quantity }}</td>
+                <td>{{ entry.created_at }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No entries found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'entry_form' %}" class="btn btn-primary">New Entry</a>
+    <a href="{% url 'download_excel' %}" class="btn btn-success">📄 Export to Excel</a>
+</div>
+{% endblock %}

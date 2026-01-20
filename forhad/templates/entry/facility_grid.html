@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Facility Grid</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .hover-details {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        padding: 8px 12px;
+        white-space: nowrap;
+        z-index: 10;
+        border-radius: 6px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .card:hover .hover-details {
+        display: block;
+    }
+
+    .card {
+        position: relative;
+        cursor: pointer;
+    }
+    .card-title a {
+    text-decoration: none;
+     /* color: inherit;optional: keeps the text color consistent */}
+
+  </style>
+</head>
+<body>
+{% include "entry/navbar.html" %}
+<div class="container mt-4">
+      <h2>
+         <a href="{% url 'add_facility' %}" class="text-decoration-none text-dark">Facility List</a>
+      </h2>
+
+
+  <!-- Search by Facility Code -->
+  <form method="get" class="mb-4">
+    <div class="input-group">
+      <input type="text" name="q" class="form-control" placeholder="Search by Facility Code..." value="{{ request.GET.q }}">
+      <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+  </form>
+
+  <!-- Core Facilities -->
+  <h4 class="mt-4 text-primary">Core Facilities</h4>
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4">
+    {% for facility in core_facilities %}
+    <div class="col">
+      <div class="card text-center shadow">
+        <div class="card-body">
+          <h5 class="card-title">
+            <a href="{% url 'systems_by_facility' facility.id %}">{{ facility.code }}</a>
+          </h5>
+          <div class="hover-details">
+            <p class="card-text">{{ facility.title }}<br>{{ facility.type }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <p>No core facilities found.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Terminal Facilities -->
+  <h4 class="mt-5 text-success">Terminal Facilities</h4>
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4">
+    {% for facility in terminal_facilities %}
+    <div class="col">
+      <div class="card text-center shadow">
+        <div class="card-body">
+          <h5 class="card-title">
+            <a href="{% url 'systems_by_facility' facility.id %}">{{ facility.code }}</a>
+          </h5>
+          <div class="hover-details">
+            <p class="card-text">{{ facility.title }}<br>{{ facility.type }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <p>No terminal facilities found.</p>
+    {% endfor %}
+  </div>
+</div>
+</body>
+</html>

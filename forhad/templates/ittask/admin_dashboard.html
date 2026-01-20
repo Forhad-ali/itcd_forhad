@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<h2 class="mb-4">⚙️ Admin Dashboard</h2>
+<div class="row g-4">
+  <div class="col-md-6">
+    <div class="card dashboard-card shadow-sm border-0">
+      <div class="card-body text-center">
+        <h5 class="card-title">🎟 Manage Tickets</h5>
+        <p class="card-text">View, create, update, or delete tickets.</p>
+        <a href="{% url 'ticket_list' %}" class="btn btn-primary">Go to Tickets</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card dashboard-card shadow-sm border-0">
+      <div class="card-body text-center">
+        <h5 class="card-title">👥 User Management</h5>
+        <p class="card-text">Create and manage user accounts & roles.</p>
+        <a href="{% url 'user_list' %}" class="btn btn-success">Manage Users</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark {{ navbar_class }}">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">System Manager</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'system_grid' %}">Systems</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'facility_grid' %}">Facilities</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'ms_inco_act_entry' %}">Incoming Act</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'facility_equipment_report' %}" >Report</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'export_facility_equipment_report' %}" >Export Excel</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'learning_category_display' %}" >Learning</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

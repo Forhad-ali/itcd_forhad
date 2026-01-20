@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Facility Equipment Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .facility-card {
+            border-left: 6px solid #197e78ff;
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.1);
+        }
+        .system-card {
+            font-size: 0.9rem;
+            border: 1px solid #dee2e6;
+            background-color: #fff;
+        }
+        .system-card h6 {
+            font-size: 1rem;
+        }
+        .table-sm th, .table-sm td {
+            font-size: 0.85rem;
+            padding: 0.4rem;
+        }
+        @media print {
+          .filter-card, .btn, .select2-container, nav, footer {
+            display: none !important;
+          }
+          body {
+            background: #fff;
+            color: #000;
+          }
+          .card {
+            page-break-inside: avoid;
+          }
+        }
+    </style>
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+</head>
+<body style="padding-top: 70px;">
+{% include "entry/navbar.html" with navbar_class="fixed-top" %}
+<div class="container py-4">
+    <h2 class="fw-bold text-primary mb-4">📊 Facility Equipment Report</h2>
+
+ <!-- ✅ Filter Form -->
+  <div class="card p-4 mb-3 filter-card">
+    <form method="get" class="row g-3 align-items-end">
+      <div class="col-md-3">
+        <label for="facility" class="form-label fw-semibold">Facility</label>
+        <select name="facility" id="facility" class="form-select">
+          <option value="">All Facilities</option>
+          {% for f in facilities %}
+            <option value="{{ f.id }}" {% if selected_facility == f.id|stringformat:"s" %}selected{% endif %}>
+              {{ f.code }} - {{ f.title }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label for="system" class="form-label fw-semibold">System</label>
+        <select name="system" id="system" class="form-select">
+          <option value="">All Systems</option>
+          {% for s in systems %}
+            <option value="{{ s.id }}" {% if selected_system == s.id|stringformat:"s" %}selected{% endif %}>
+              {{ s.code }} - {{ s.title }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label for="equipment" class="form-label fw-semibold">Equipment</label>
+        <select name="equipment" id="equipment" class="form-select">
+          <option value="">All Equipment</option>
+          {% for e in equipment_names %}
+            <option value="{{ e }}" {% if selected_equipment == e %}selected{% endif %}>{{ e }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-1">
+        <label for="equipment_type" class="form-label fw-semibold">Type</label>
+        <select name="equipment_type" id="equipment_type" class="form-select" multiple>
+          {% for etype in equipment_types %}
+            <option value="{{ etype }}" {% if etype in selected_equipment_types %}selected{% endif %}>
+              {{ etype }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-2 d-flex gap-2">
+        <button type="submit" class="btn btn-outline-secondary w-100">🔍 Search</button>
+        <a href="{% url 'export_equipment_pdf' %}?facility={{ selected_facility }}&system={{ selected_system }}&equipment={{ selected_equipment }}"
+           class="btn btn-outline-secondary w-100">🧾Export</a>
+        <button onclick="window.print()" class="btn btn-outline-secondary">🖨️ Print</button>
+      </div>
+    </form>
+  </div>
+
+
+    {% for facility in report_data %}
+    <div class="card mb-5 facility-card">
+        <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0">🏢 {{ facility.facility.code }} - {{ facility.facility.title }}</h5>
+        </div>
+        <div class="card-body">
+            {% if facility.systems %}
+            <div class="row g-3">
+                {% for sys in facility.systems %}
+                <div class="col-md-6">
+                    <div class="card system-card h-100">
+                        <div class="card-body">
+                            <h6 class="text-dark mb-2">🖥️ {{ sys.system.code }} - {{ sys.system.title }}</h6>
+                            <p class="text-muted mb-2" style="font-size: 0.8rem;">
+                                📄 <strong>Doc Ref:</strong> {{ sys.doc_ref|default:"-" }} |
+                                <strong>Version:</strong> {{ sys.doc_ver|default:"-" }}
+                            </p>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Equipment</th>
+                                            <th>Qty</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for eq in sys.equipments %}
+                                        <tr>
+                                            <td>{{ eq.name }}</td>
+                                            <td>{{ eq.quantity|default:"-" }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-muted mb-0">No systems assigned to this facility.</p>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="alert alert-warning">⚠️ No facilities found with matching data.</div>
+    {% endfor %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- jQuery + Select2 JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    $('#facility').select2({ placeholder: "Select Facility", allowClear: true });
+    $('#system').select2({ placeholder: "Select System", allowClear: true });
+    $('#equipment').select2({ placeholder: "Select Equipment", allowClear: true });
+    $('#equipment_type').select2({ placeholder: "Select Type(s)", allowClear: true });
+
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Manager Dashboard{% endblock %}
+{% block content %}
+<h2 class="mb-4">📊 Manager Dashboard</h2>
+<div class="row g-4">
+  <div class="col-md-12">
+    <div class="card dashboard-card shadow-sm border-0">
+      <div class="card-body text-center">
+        <h5 class="card-title">🎟 Ticket Management</h5>
+        <p class="card-text">View, create, edit, or delete tickets.</p>
+        <a href="{% url 'ticket_list' %}" class="btn btn-primary">Go to Tickets</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

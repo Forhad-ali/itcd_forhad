@@ -1,0 +1,112 @@
+/* style.css */
+
+/* General body style */
+body {
+    background: linear-gradient(135deg, #e3f2fd, #ffffff);
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    margin: 0;
+    padding: 30px;
+}
+
+/* Card containers for forms or tables */
+.card, .form-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    padding: 25px 35px;
+    max-width: 900px;
+    margin: auto;
+    transition: all 0.3s ease-in-out;
+}
+
+.card:hover, .form-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* Headings */
+h2 {
+    text-align: center;
+    color: #0d6efd;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* Labels and inputs */
+label {
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+input, select, textarea {
+    border-radius: 10px !important;
+    border: 1px solid #ced4da !important;
+    transition: 0.3s;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: #0d6efd !important;
+    box-shadow: 0 0 0 0.2rem rgba(13,110,253,0.25);
+}
+
+/* Buttons */
+.btn-primary, .btn-secondary {
+    border-radius: 40px;
+    padding: 8px 25px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, #0d6efd, #3b82f6);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(90deg, #084298, #2563eb);
+    transform: scale(1.03);
+}
+
+.btn-secondary:hover {
+    transform: scale(1.03);
+}
+
+/* Button groups (side by side) */
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Tables */
+.table {
+    background-color: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+th {
+    background-color: #0d6efd;
+    color: #fff;
+    text-align: center;
+    vertical-align: middle;
+}
+
+td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+tr:hover {
+    background-color: #f0f8ff;
+    transition: 0.3s;
+}
+
+/* Responsive form rows */
+.row.g-3 > .col-md-6 {
+    margin-bottom: 15px;
+}
