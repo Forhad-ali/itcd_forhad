@@ -10,7 +10,7 @@ TYPE_CHOICES = (
 # ---------------------- Facility ----------------------
 class Facility(models.Model):
     code = models.CharField(max_length=20, unique=True)
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=200)
     type = models.CharField(max_length=20, choices=TYPE_CHOICES)
 
     def __str__(self):
