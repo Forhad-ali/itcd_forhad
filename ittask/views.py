@@ -122,17 +122,19 @@ def ticket_create(request):
         if form.is_valid():
             ticket = form.save(commit=False)  # Don't save yet
 
-            # If a staff is assigned, record the assignment time
-            if form.cleaned_data['assigned_to']:
+            # ✅ REQUIRED: set creator
+            ticket.created_by = request.user
+
+            # ✅ If a staff is assigned, record assignment time
+            if ticket.assigned_to:
                 ticket.assigned_at = timezone.now()
 
-            ticket.save()  # Now save to DB
+            ticket.save()
             return redirect('ticket_list')
     else:
         form = TicketForm()
 
     return render(request, "ittask/ticket_form.html", {"form": form})
-
 
 @role_required(['admin', 'manager', 'staff'])
 
