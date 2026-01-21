@@ -3,7 +3,7 @@
 {% block content %}
 <h2 class="mb-4">📊 Manager Dashboard</h2>
 <div class="row g-4">
-  <div class="col-md-12">
+  <div class="col-md-6">
     <div class="card dashboard-card shadow-sm border-0">
       <div class="card-body text-center">
         <h5 class="card-title">🎟 Ticket Management</h5>
@@ -12,5 +12,19 @@
       </div>
     </div>
   </div>
+
+  <!-- ✅ Entry App Link (ADDED ONLY) -->
+  <div class="col-md-6">
+    <div class="card dashboard-card shadow-sm border-0">
+      <div class="card-body text-center">
+        <h5 class="card-title">🏢 ITCD Systems</h5>
+        <p class="card-text">Facilities, Systems, Equipment & Learning.</p>
+        <a href="{% url 'facility_grid' %}" class="btn btn-warning">
+          Go to ITCD Systems App
+        </a>
+      </div>
+    </div>
+  </div>
+
 </div>
 {% endblock %}
