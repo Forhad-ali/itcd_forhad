@@ -5,7 +5,8 @@ from django.utils.text import slugify
 from django import forms
 from django.contrib.auth.decorators import login_required
 from common.decorators import role_required
-from django.db.models import Q
+from django.db.models import Q, Sum
+
 
 import csv
 
@@ -543,3 +544,41 @@ def delete_step(request, step_id):
     topic_id = step.topics_entry.id
     step.delete()
     return redirect('learning_steps_view', topic_id=topic_id)
+
+
+
+
+@role_required(['admin', 'manager', 'staff', 'viewer'])
+def system_dashboard_view(request):
+    total_facilities = Facility.objects.count()
+    total_systems = System.objects.count()
+    total_equipment_names = SystemEquipmentQuantity.objects.values('equipment_name').distinct().count()
+    total_equipment_quantity = SystemEquipmentQuantity.objects.aggregate(total=Sum('quantity'))['total'] or 0
+    
+
+    # Equipment summary grouped by system
+    equipment_summary_by_system = []
+
+    systems = System.objects.all()
+    for sys in systems:
+        equipments = (
+            SystemEquipmentQuantity.objects
+            .filter(system=sys)
+            .values('equipment_name')
+            .annotate(total_qty=Sum('quantity'))
+            .order_by('equipment_name')
+        )
+        equipment_summary_by_system.append({
+            'system_name': sys.code,
+            'equipments': list(equipments)
+        })
+
+    context = {
+        'total_facilities': total_facilities,
+        'total_systems': total_systems,
+        'total_equipment_names': total_equipment_names,
+        'total_equipment_quantity': total_equipment_quantity,
+        'equipment_summary_by_system': equipment_summary_by_system,
+    }
+
+    return render(request, 'entry/system_dashboard.html', context)

@@ -13,7 +13,7 @@ urlpatterns = [
 
     # System Section
     path('add_system', views.add_system, name='add_system'),  # Home - Add System
-    path('', views.system_grid, name='system_grid'),
+    path('system_grid', views.system_grid, name='system_grid'),
 
     # Equipment Section
     path('equipment-entry/<int:system_id>/', views.equipment_entry, name='equipment_entry'),
@@ -41,6 +41,8 @@ urlpatterns = [
     path('topics/<int:topic_id>/steps/', views.learning_steps_view, name='learning_steps_view'),
     path('learning-steps/delete/<int:step_id>/', views.delete_step, name='delete_step'),
     path('learning-steps/edit/<int:step_id>/', views.edit_step, name='edit_step'),
+
+    path('', views.system_dashboard_view, name='system_dashboard'),
 
 ]
 
