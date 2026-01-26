@@ -574,7 +574,7 @@ def system_dashboard_view(request):
             .order_by('equipment_name')
         )
         equipment_summary_by_system.append({
-            'system_name': sys.code,
+            'system_name': f"{sys.code} - {sys.title}",
             'equipments': list(equipments)
         })
 
@@ -603,8 +603,11 @@ def system_facility_card_view(request):
         assignments = system.systemfacilityassignment_set.all()
         facility_codes = [a.facility.code for a in assignments]
 
+        system_display = f"{system.code} - {system.title}"
+
         system_cards.append({
             'system': system,
+            'system_display': system_display,
             'facility_codes': ", ".join(facility_codes),
             'total_facilities': len(facility_codes)
         })

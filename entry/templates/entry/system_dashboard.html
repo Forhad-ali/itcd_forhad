@@ -78,7 +78,7 @@
                 {% for system_summary in equipment_summary_by_system %}
                     <div class="card shadow mb-4">
                         <div class="card-header bg-secondary text-white">
-                            <h5 class="mb-0">System: {{ system_summary.system_name }}</h5>
+                            <h5 class="mb-0">{{ system_summary.system_name }}</h5>
                         </div>
                         <div class="card-body p-0">
                             {% if system_summary.equipments %}
