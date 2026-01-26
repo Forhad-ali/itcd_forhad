@@ -43,6 +43,9 @@ urlpatterns = [
     path('learning-steps/edit/<int:step_id>/', views.edit_step, name='edit_step'),
 
     path('', views.system_dashboard_view, name='system_dashboard'),
+    path('system-facility-cards/', views.system_facility_card_view, name='system_facility_cards'),
+    path('facility-system-summary/', views.facility_system_summary_view, name='facility_system_summary'),
+
 
 ]
 

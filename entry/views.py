@@ -6,6 +6,11 @@ from django import forms
 from django.contrib.auth.decorators import login_required
 from common.decorators import role_required
 from django.db.models import Q, Sum
+from django.shortcuts import render
+from django.db.models import Count
+from .models import System, SystemFacilityAssignment
+from django.shortcuts import render
+from .models import Facility, SystemFacilityAssignment
 
 
 import csv
@@ -547,7 +552,7 @@ def delete_step(request, step_id):
 
 
 
-
+@login_required
 @role_required(['admin', 'manager', 'staff', 'viewer'])
 def system_dashboard_view(request):
     total_facilities = Facility.objects.count()
@@ -582,3 +587,60 @@ def system_dashboard_view(request):
     }
 
     return render(request, 'entry/system_dashboard.html', context)
+
+
+
+@login_required
+@role_required(['admin', 'manager', 'staff', 'viewer'])
+
+def system_facility_card_view(request):
+    systems = System.objects.all().prefetch_related(
+        'systemfacilityassignment_set__facility'
+    )
+
+    system_cards = []
+    for system in systems:
+        assignments = system.systemfacilityassignment_set.all()
+        facility_codes = [a.facility.code for a in assignments]
+
+        system_cards.append({
+            'system': system,
+            'facility_codes': ", ".join(facility_codes),
+            'total_facilities': len(facility_codes)
+        })
+
+    return render(
+        request,
+        'entry/system_facility_cards.html',
+        {
+            'system_cards': system_cards
+        }
+    )
+
+
+
+@login_required
+@role_required(['admin', 'manager', 'staff', 'viewer'])
+
+def facility_system_summary_view(request):
+    facilities = Facility.objects.all()
+
+    facility_data = []
+
+    for fac in facilities:
+        # Get all systems assigned to this facility
+        systems_qs = SystemFacilityAssignment.objects.filter(facility=fac).select_related('system')
+        systems_list = [s.system.code for s in systems_qs]  # comma separated
+        system_count = len(systems_list)
+
+        facility_data.append({
+            'facility_code': fac.code,
+            'systems': ", ".join(systems_list) if systems_list else "—",
+            'system_count': system_count
+        })
+
+    context = {
+        'facility_data': facility_data,
+    }
+
+    return render(request, 'entry/facility_system_summary.html', context)

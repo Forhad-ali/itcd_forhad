@@ -35,16 +35,17 @@
             <div class="card shadow text-center">
                 <div class="card-body">
                     <h6>Total Facilities</h6>
-                    <h2>{{ total_facilities }}</h2>
+                    <h2><a href="{% url 'facility_system_summary' %}" class="text-decoration-none text-dark">{{ total_facilities }}</a></h2>
                 </div>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="card shadow text-center">
-                <div class="card-body">
+                <div class="card-body" >
                     <h6>Total Systems</h6>
-                    <h2>{{ total_systems }}</h2>
+                    <h2>   <a href="{% url 'system_facility_cards' %}" class="text-decoration-none text-dark">{{ total_systems }}</a>
+                    </h2>
                 </div>
             </div>
         </div>

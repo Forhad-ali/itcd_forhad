@@ -1,0 +1,33 @@
+{% extends "base1.html" %}
+{% block content %}
+
+<div class="container mt-4">
+    <h3 class="mb-4">Facility-wise Systems</h3>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Facility Code</th>
+                    <th>Systems</th>
+                    <th>Total Systems</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fac in facility_data %}
+                    <tr>
+                        <td>{{ fac.facility_code }}</td>
+                        <td>{{ fac.systems }}</td>
+                        <td>{{ fac.system_count }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center">No facilities found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
