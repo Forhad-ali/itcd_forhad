@@ -84,11 +84,11 @@ WSGI_APPLICATION = 'forhad.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'itcd_backup_db',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',   # or your server IP
-        'PORT': '5432',        # default PostgreSQL port
+        'NAME': 'itcd_forhad_db',
+        'USER': 'forhad_itcd',
+        'PASSWORD':'forhad@ITCD#2026',
+        'HOST':'localhost',
+        'PORT': '5432'
     }
 }
 
