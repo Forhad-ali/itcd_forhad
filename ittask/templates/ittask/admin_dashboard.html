@@ -1,20 +1,64 @@
-{% extends 'base.html' %}
-{% block title %}Admin Dashboard{% endblock %}
+{% extends 'base2.html' %}
+{% block title %}Manager Dashboard{% endblock %}
 {% block content %}
-<h2 class="mb-4">⚙️ Admin Dashboard</h2>
-
+<h2 class="mb-4">Manager Dashboard</h2>
 <div class="row g-4">
   <div class="col-md-4">
     <div class="card dashboard-card shadow-sm border-0">
       <div class="card-body text-center">
-        <h5 class="card-title">🎟 Manage Tickets</h5>
-        <p class="card-text">View, create, update, or delete tickets.</p>
-        <a href="{% url 'ticket_list' %}" class="btn btn-primary">Go to Tickets</a>
+        <h5 class="card-title">Ticket Management</h5>
+        <a href="http://172.17.200.248/" class="btn btn-primary">Tickets</a>
       </div>
     </div>
   </div>
 
   <div class="col-md-4">
+    <div class="card dashboard-card shadow-sm border-0">
+      <div class="card-body text-center">
+        <h5 class="card-title">ITCD System</h5>
+        <a href="{% url 'facility_grid' %}" class="btn btn-warning">
+          ITCD Systems
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card dashboard-card shadow-sm border-0">
+      <div class="card-body text-center">
+        <h5 class="card-title">ITCD Archive</h5>
+        <a href="{% url 'camera_app:image_list' %}" class="btn btn-warning">
+          Archive 
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row g-8">
+  <div class="col-md-4">
+    <div class="card dashboard-card shadow-sm border-0">
+      <div class="card-body text-center">
+        <h5 class="card-title">Local Warning System</h5>
+      
+        <a href="http://172.17.108.11:8080/" class="btn btn-primary">LWS</a>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col-md-4">
+    <div class="card dashboard-card shadow-sm border-0">
+      <div class="card-body text-center">
+        <h5 class="card-title">ITCD </h5>
+        <a href="{% url 'facility_grid' %}" class="btn btn-warning">
+          ITCD 
+        </a>
+      </div>
+    </div>
+  </div>
+  </div>
+    <div class="col-md-4">
     <div class="card dashboard-card shadow-sm border-0">
       <div class="card-body text-center">
         <h5 class="card-title">👥 User Management</h5>
@@ -23,19 +67,5 @@
       </div>
     </div>
   </div>
-
-  <!-- ✅ Entry App Link (ADDED ONLY) -->
-  <div class="col-md-4">
-    <div class="card dashboard-card shadow-sm border-0">
-      <div class="card-body text-center">
-        <h5 class="card-title">🏢 ITCD Systems</h5>
-        <p class="card-text">Facilities, Systems, Equipment & Learning.</p>
-        <a href="{% url 'system_dashboard' %}" class="btn btn-warning">
-          Go to ITCD Systems App 
-        </a>
-      </div>
-    </div>
-  </div>
 </div>
-
 {% endblock %}

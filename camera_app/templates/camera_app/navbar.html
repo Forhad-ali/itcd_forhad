@@ -1,0 +1,22 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-secondary fixed-top shadow">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'dashboard' %}">ITCD</a>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == '/upload/' %}active{% endif %}" 
+             href="{% url 'camera_app:upload_form' %}">Upload</a>
+        </li>  
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == '/' %}active{% endif %}" 
+             href="{% url 'camera_app:recent_image' %}">Recent</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == '/gallery/' %}active{% endif %}" 
+             href="{% url 'camera_app:image_list' %}">Gallery</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

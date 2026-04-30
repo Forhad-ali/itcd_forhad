@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'entry',
     'ITCD',
     'ittask',
+    'camera_app'
     
 
 ]
@@ -82,8 +83,12 @@ WSGI_APPLICATION = 'forhad.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'itcd_backup_db',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'localhost',   # or your server IP
+        'PORT': '5432',        # default PostgreSQL port
     }
 }
 
@@ -126,3 +131,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 AUTH_USER_MODEL = 'ittask.CustomUser'
+
+
+
+import os
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

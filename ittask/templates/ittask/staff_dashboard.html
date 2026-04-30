@@ -3,12 +3,32 @@
 {% block content %}
 <h2 class="mb-4">🛠 Staff Dashboard</h2>
 <div class="row g-4">
-  <div class="col-md-12">
+  <div class="col-md-4">
     <div class="card dashboard-card shadow-sm border-0">
       <div class="card-body text-center">
         <h5 class="card-title">📋 My Tickets</h5>
         <p class="card-text">View and update your assigned tickets.</p>
         <a href="{% url 'ticket_list' %}" class="btn btn-primary">View Tickets</a>
+      </div>
+    </div>
+  </div>
+
+    <div class="col-md-4">
+    <div class="card dashboard-card shadow-sm border-0">
+      <div class="card-body text-center">
+        <h5 class="card-title">Ticket Management</h5>
+        <a href="http://172.17.200.248/" class="btn btn-primary">Tickets</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card dashboard-card shadow-sm border-0">
+      <div class="card-body text-center">
+        <h5 class="card-title">ITCD Archive</h5>
+        <a href="{% url 'camera_app:image_list' %}" class="btn btn-warning">
+          Archive 
+        </a>
       </div>
     </div>
   </div>

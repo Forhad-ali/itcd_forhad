@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload Image</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    body {
+        background-color: #f0f2f5;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        padding-top: 70px;
+    }
+
+    .upload-card {
+        max-width: 90%;
+        margin: 30px auto;
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 15px 5px rgba(0,0,0,0.2);
+        padding: 30px;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #0d6efd;
+        font-weight: 600;
+    }
+
+    .form-label {
+        font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="file"] {
+        border-radius: 8px;
+        padding: 10px;
+        width: 100%;
+        border: 1px solid #ccc;
+        transition: border 0.3s, box-shadow 0.3s;
+    }
+
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    input[type="file"]:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 5px rgba(13, 110, 253, 0.5);
+        outline: none;
+    }
+
+    button[type="submit"] {
+        background-color: #0d6efd;
+        color: #fff;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 8px;
+        width: 100%;
+        font-weight: 600;
+        transition: background 0.3s, transform 0.3s;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #0b5ed7;
+        transform: translateY(-2px);
+    }
+
+    #preview {
+        max-width: 100%;
+        max-height: 600px;
+        border-radius: 12px;
+        border: 1px solid #ccc;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        object-fit: contain;
+    }
+
+    /* Scrollable form on small screens */
+    @media(max-width: 768px){
+        .form-col, .preview-col {
+            flex: 100%;
+            max-width: 100%;
+            margin-bottom: 20px;
+        }
+    }
+</style>
+</head>
+<body>
+
+{% include 'camera_app/navbar.html' %}
+
+<div class="upload-card">
+    <h4>Upload Camera Image</h4>
+    <div class="row">
+        <!-- Left: Form -->
+        <div class="col-md-3 form-col">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Select Image:</label>
+                    <input type="file" name="image" class="form-control" accept="image/*" onchange="previewImage(event)" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Title:</label>
+                    <input type="text" name="title" class="form-control" placeholder="Enter image title" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Capture Date:</label>
+                    <input type="date" name="capture_date" class="form-control">
+                </div>
+
+                <button type="submit" class="mt-2">Upload</button>
+            </form>
+        </div>
+
+        <!-- Right: Preview -->
+        <div class="col-md-9 preview-col d-flex justify-content-center align-items-center">
+            <img id="preview" alt="">
+        </div>
+    </div>
+</div>
+
+<script>
+function previewImage(event) {
+    const preview = document.getElementById('preview');
+    const file = event.target.files[0];
+
+    if(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    } else {
+        preview.src = '';
+    }
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

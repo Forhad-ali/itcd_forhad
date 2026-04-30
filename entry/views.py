@@ -341,7 +341,7 @@ def facility_equipment_report_view(request):
     # Base data for filters
     facilities = Facility.objects.all()
     systems = System.objects.all()
-    equipment_names = SystemEquipmentQuantity.objects.values_list('equipment_name', flat=True).distinct()
+    equipment_names = EquipmentEntry.objects.values_list('equipment_name', flat=True).distinct()
     equipment_types = EquipmentEntry.objects.values_list('type', flat=True).distinct()
 
     report_data = []
@@ -363,15 +363,20 @@ def facility_equipment_report_view(request):
         system_list = []
 
         for sys in system_qs:
-            entries = SystemEquipmentQuantity.objects.filter(system=sys, facility=fac)
+            entries = SystemEquipmentQuantity.objects.filter(system=sys, facility=fac).select_related('equipment_entry')
               # Debug counts - Add here
             total = entries.count()
             linked = entries.filter(equipment_entry__isnull=False).count()
             print(f"Facility: {fac.code}, System: {sys.code} => Total entries: {total}, linked to equipment_entry: {linked}")
 
             # Filter by selected equipment name
+
             if selected_equipment:
-                entries = entries.filter(equipment_name=selected_equipment)
+                    entries = entries.filter(
+                        Q(equipment_entry__equipment_name=selected_equipment) |
+                        Q(equipment_entry__isnull=True, equipment_name=selected_equipment)
+                    )
+
 
             # Exclude equipment entries whose equipment_entry.type is in selected_equipment_types
             if selected_equipment_types:
@@ -387,7 +392,7 @@ def facility_equipment_report_view(request):
                     'doc_ver': entries.first().doc_version,
                     'equipments': [
                         {
-                            'name': entry.equipment_name,
+                            'name': entry.equipment_entry.equipment_name if entry.equipment_entry else entry.equipment_name,
                             'quantity': entry.quantity,
                         } for entry in entries
                     ]

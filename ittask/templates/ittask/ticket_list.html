@@ -12,7 +12,7 @@
 
 <body class="bg-light">
 
-<div class="container my-4" style="max-width: 95%;">
+<div class="container my-4">
 
   <!-- ===== Compact Status Summary ===== -->
   <div class="card mb-3 shadow-sm">
@@ -71,7 +71,7 @@
         <table class="table table-striped table-hover align-middle mb-0">
           <thead class="table-dark small">
             <tr>
-              <th>Ticket #</th>
+              <th>Ticket Number</th>
               <th>Title</th>
               <th>Status</th>
               <th>Assigned To</th>
@@ -83,14 +83,9 @@
 
           <tbody class="small">
           {% for ticket in tickets %}
-            <tr style="cursor:pointer;" onclick="window.location='{% url 'ticket_detail' ticket.id %}'">
+            <tr>
               <td>{{ ticket.id }}</td>
-
-              <td>
-                <a href="{% url 'ticket_detail' ticket.id %}" class="text-decoration-none" onclick="event.stopPropagation();">
-                  {{ ticket.title }}
-                </a>
-              </td>
+              <td><a href="{% url 'ticket_detail' ticket.id %}" class="text-decoration-none">{{ ticket.title }} </a></td>
 
               <td>
                 <span class="badge rounded-pill px-2 py-1
@@ -107,14 +102,14 @@
               <td>{{ ticket.created_by }}</td>
 
               <td>
-                {% if user.role in "admin manager staff" %}
-                  <a href="{% url 'ticket_update' ticket.id %}" class="btn btn-primary btn-sm me-1" onclick="event.stopPropagation();">
+                {% if user.role == "admin" or user.role == "manager" or user.role == "staff" %}
+                  <a href="{% url 'ticket_update' ticket.id %}" class="btn btn-primary btn-sm me-1">
                     ✏️ Edit
                   </a>
                 {% endif %}
 
-                {% if user.role in "admin manager" %}
-                  <a href="{% url 'ticket_delete' ticket.id %}" class="btn btn-danger btn-sm" onclick="event.stopPropagation();">
+                {% if user.role == "admin" or user.role == "manager" %}
+                  <a href="{% url 'ticket_delete' ticket.id %}" class="btn btn-danger btn-sm">
                     🗑️ Delete
                   </a>
                 {% endif %}
