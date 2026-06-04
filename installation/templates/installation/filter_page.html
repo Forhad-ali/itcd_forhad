@@ -1,0 +1,86 @@
+{% extends "installation/base_nav.html" %}
+
+{% block title %}Filtered Data{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="card-box">
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+
+            <h4 class="mb-0">
+                {{ title }} : {{ records|length }}
+            </h4>
+
+            <div style="width: 300px;">
+                <input type="text"
+                       id="searchBox"
+                       class="form-control search-box"
+                       placeholder="Search items...">
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            {% for r in records %}
+
+            <div class="col-md-4 mb-2 item-box">
+
+                <div class="p-2 border rounded bg-light">
+
+                    <b>{{ forloop.counter }}.</b>
+
+                    <span class="item-text">
+                        {% if r.name %}
+                            {{ r.name }}
+                        {% elif r.ms_id %}
+                            {{ r.ms_id }}
+                        {% elif r.ms_id_full %}
+                            {{ r.ms_id_full }}
+                        {% elif r.p4_id %}
+                            {{ r.p4_id }}
+                        {% elif r.p8_id %}
+                            {{ r.p8_id }}
+                        {% elif r.p9_id %}
+                            {{ r.p9_id }}
+                        {% else %}
+                            {{ r }}
+                        {% endif %}
+                    </span>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="col-12 text-center text-muted py-4">
+                No records found
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById("searchBox").addEventListener("keyup", function () {
+    const value = this.value.toLowerCase();
+    const items = document.querySelectorAll(".item-box");
+
+    items.forEach(function (item) {
+        const text = item.querySelector(".item-text").innerText.toLowerCase();
+        item.style.display = text.includes(value) ? "" : "none";
+    });
+});
+</script>
+{% endblock %}

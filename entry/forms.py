@@ -3,7 +3,7 @@ from django import forms
 from .models import EquipmentEntry
 from .models import System
 from .models import Learning_Category 
-from .models import TopicsEntry
+from .models import TopicsEntry, ABDEntry
 class EquipmentEntryForm(forms.ModelForm):
     class Meta:
         model = EquipmentEntry
@@ -121,3 +121,11 @@ class TopicsEntryForm(forms.ModelForm):
         }
 
 
+class ABDEntryForm(forms.ModelForm):
+    class Meta:
+        model = ABDEntry
+        fields = ['ms_id', 'status', 'abd_number', 'start_date', 'end_date']
+        widgets = {
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'type': 'date'}),
+        }

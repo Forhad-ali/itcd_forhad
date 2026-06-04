@@ -112,3 +112,23 @@ class LearningStep(models.Model):
 
     def __str__(self):
         return f"Step {self.step_number}: {self.title}"
+
+
+
+class ABDEntry(models.Model):
+    STATUS_CHOICES = [
+        ('YES', 'Yes'),
+        ('NO', 'No'),
+    ]
+
+    ms_id = models.CharField(max_length=100)
+    status = models.CharField(max_length=3, choices=STATUS_CHOICES)
+
+    abd_number = models.CharField(max_length=100)
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.ms_id} - {self.abd_number}"

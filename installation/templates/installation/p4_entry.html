@@ -1,0 +1,185 @@
+{% extends "installation/base_nav.html" %}
+
+{% block title %}P4 Entry Form{% endblock %}
+
+
+
+{% block extra_css %}
+<style>
+    .main-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    .form-check-input {
+        background-color: #198754 !important;
+        border-color: #cd7640 !important;
+    }
+
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="main-card">
+
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+            <h2 class="m-0">P4 Entry Form</h2>
+
+            <a href="{% url 'p4_display_list' %}" class="btn btn-secondary">
+                Back
+            </a>
+        </div>
+
+        <!-- FORM -->
+        <form method="POST">
+            {% csrf_token %}
+
+            <input type="hidden" name="ms_ids" id="ms_ids_input">
+
+            <!-- FIRST ROW -->
+            <div class="row g-3">
+
+                <div class="col-md-3">
+                    <label for="{{ form.p4_id.id_for_label }}">P4 ID</label>
+                    {{ form.p4_id }}
+                </div>
+
+                <div class="col-md-3">
+                    <label>MS ID</label>
+
+                    <div class="ms-wrapper">
+                        <input type="text"
+                               class="form-control ms-search"
+                               placeholder="Search MS ID..."
+                               onkeyup="searchMS(this)">
+
+                        <div class="ms-results"></div>
+                    </div>
+
+                    <div class="selected-ms mt-2"></div>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="{{ form.saw_programs.id_for_label }}">SAW Program</label>
+                    {{ form.saw_programs }}
+                </div>
+
+                <div class="col-md-3">
+                    <label for="{{ form.associate_ms.id_for_label }}">Associate MS</label>
+                    {{ form.associate_ms }}
+                </div>
+
+            </div>
+
+            <!-- SECOND ROW -->
+            <div class="row g-3 mt-3">
+
+                <div class="col-md-3">
+                    <label for="{{ form.completed.id_for_label }}">Completed</label>
+                    <div class="form-check mt-2">
+                        {{ form.completed }}
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="{{ form.start_date.id_for_label }}">Start Date</label>
+                    {{ form.start_date }}
+                </div>
+
+                <div class="col-md-3">
+                    <label for="{{ form.end_date.id_for_label }}">End Date</label>
+                    {{ form.end_date }}
+                </div>
+
+            </div>
+
+            <!-- BUTTON -->
+            <div class="text-end mt-4">
+                <button type="submit" class="btn btn-success px-4">
+                    Save P4
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let selectedMS = [];
+
+function syncInput() {
+    document.getElementById("ms_ids_input").value = selectedMS.join(",");
+}
+
+function searchMS(input) {
+    const query = input.value.trim();
+    const wrapper = input.closest(".ms-wrapper");
+    const resultBox = wrapper.querySelector(".ms-results");
+
+    if (query.length < 2) {
+        resultBox.innerHTML = "";
+        return;
+    }
+
+    fetch(`/installation/search-ms/?q=${encodeURIComponent(query)}`)
+        .then(res => res.json())
+        .then(data => {
+            resultBox.innerHTML = "";
+
+            if (data.length === 0) {
+                resultBox.innerHTML = `<div class="p-2 text-muted">No result found</div>`;
+                return;
+            }
+
+            data.forEach(item => {
+                if (selectedMS.includes(item.ms_id)) return;
+
+                const div = document.createElement("div");
+                div.innerText = item.ms_id;
+
+                div.onclick = function () {
+                    addMS(item.ms_id, input);
+                };
+
+                resultBox.appendChild(div);
+            });
+        });
+}
+
+function addMS(ms_id, input) {
+    if (selectedMS.includes(ms_id)) return;
+
+    selectedMS.push(ms_id);
+    syncInput();
+
+    const column = input.closest(".col-md-3");
+    const selectedBox = column.querySelector(".selected-ms");
+
+    const badge = document.createElement("span");
+    badge.classList.add("badge", "bg-primary", "me-1", "mb-1", "p-2");
+    badge.innerHTML = `${ms_id} &times;`;
+
+    badge.onclick = function () {
+        selectedMS = selectedMS.filter(id => id !== ms_id);
+        syncInput();
+        badge.remove();
+    };
+
+    selectedBox.appendChild(badge);
+
+    input.value = "";
+    input.closest(".ms-wrapper").querySelector(".ms-results").innerHTML = "";
+}
+</script>
+{% endblock %}

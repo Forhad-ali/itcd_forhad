@@ -1,0 +1,78 @@
+{% extends 'baseroom.html' %}
+
+{% block content %}
+
+<div class="card shadow">
+
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">
+            {{ facility.facility }} - {{ facility.facility_title }}
+        </h4>
+    </div>
+
+    <div class="card-body">
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success alert-dismissible fade show">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" id="systemForm">
+            {% csrf_token %}
+
+            <div class="row">
+
+                {% for system in systems %}
+                <div class="col-md-4 mb-3">
+
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body">
+
+                            <div class="form-check">
+
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    name="systems"
+                                    value="{{ system.sid }}"
+                                    id="sys{{ system.sid }}"
+
+                                    {% if system.sid in selected_ids %}
+                                        checked
+                                    {% endif %}
+                                >
+
+                                <label class="form-check-label" for="sys{{ system.sid }}">
+                                    <strong>{{ system.system_code }}</strong>
+                                    <br>
+                                    <small class="text-muted">
+                                        {{ system.system_title }}
+                                    </small>
+                                </label>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                {% endfor %}
+
+            </div>
+
+            <button type="submit"
+                    class="btn btn-success"
+                    onclick="this.disabled=true; this.form.submit();">
+                Save Systems
+            </button>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

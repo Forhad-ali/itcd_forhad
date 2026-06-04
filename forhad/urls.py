@@ -11,6 +11,8 @@ urlpatterns = [
     path('', include('ittask.urls')),
     path('entry/', include('entry.urls')),
     path('camera_app/', include('camera_app.urls')),
+    path('installation/', include('installation.urls')),
+    path('roomwise/', include('roomwise.urls')),
 ]
 
 # 🔥 ADD THIS (IMPORTANT FOR IMAGES)

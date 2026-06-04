@@ -1,0 +1,188 @@
+{% extends "installation/base_nav.html" %}
+
+{% block title %}P8 Entry Form{% endblock %}
+
+
+{% block extra_css %}
+<style>
+    .main-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    .form-check-input {
+        background-color: #198754 !important;
+        border-color: #cd7640 !important;
+    }
+    .wide-input input,
+    .wide-input select,
+    .wide-input textarea {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="main-card">
+
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>P8 Entry Form</h2>
+
+            <a href="{% url 'p8_display_list' %}" class="btn btn-secondary">
+                Back
+            </a>
+        </div>
+
+        <!-- FORM -->
+        <form method="POST">
+            {% csrf_token %}
+
+            <input type="hidden" name="p4_ids" id="p4_ids_input">
+
+            <div class="row g-3">
+
+                <!-- P8 ID -->
+                <div class="col-md-4">
+                    <label>P8 ID</label>
+                    <div class="wide-input">
+                    {{ form.p8_id }}
+                    </div>
+                </div>
+
+                <!-- P4 SEARCH -->
+                <div class="col-md-4">
+                    <label>P4 ID</label>
+
+                    <div class="ms-wrapper">
+                        <input type="text"
+                               class="form-control"
+                               placeholder="Search P4 ID..."
+                               onkeyup="searchP4(this)">
+
+                        <div class="ms-results"></div>
+                    </div>
+
+                    <div class="selected-ms mt-2"></div>
+                </div>
+
+                <!-- P2 ID -->
+                <div class="col-md-4">
+                    <label>P2 ID</label>
+                    {{ form.p2_id }}
+                </div>
+
+            </div>
+
+            <!-- SECOND ROW -->
+            <div class="row g-3 mt-3">
+
+                <div class="col-md-4">
+                    <label>Completed</label>
+                    <div class="form-check mt-2">
+                        {{ form.completed }}
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <label>Start Date</label>
+                    {{ form.start_date }}
+                </div>
+
+                <div class="col-md-4">
+                    <label>End Date</label>
+                    {{ form.end_date }}
+                </div>
+
+            </div>
+
+            <!-- SUBMIT -->
+            <div class="text-end mt-4">
+                <button type="submit" class="btn btn-success px-4">
+                    Save P8
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let selectedP4 = [];
+
+function syncInput() {
+    document.getElementById("p4_ids_input").value = selectedP4.join(",");
+}
+
+function searchP4(input) {
+    const query = input.value.trim();
+    const wrapper = input.parentElement;
+    const resultBox = wrapper.querySelector(".ms-results");
+
+    if (query.length < 2) {
+        resultBox.innerHTML = "";
+        return;
+    }
+
+    fetch(`/installation/search-p4/?q=${encodeURIComponent(query)}`)
+        .then(res => res.json())
+        .then(data => {
+            resultBox.innerHTML = "";
+
+            if (data.length === 0) {
+                resultBox.innerHTML = `<div class="p-2 text-muted">No result found</div>`;
+                return;
+            }
+
+            data.forEach(item => {
+                if (selectedP4.includes(item.p4_id)) return;
+
+                const div = document.createElement("div");
+                div.innerText = item.p4_id;
+
+                div.onclick = function () {
+                    addP4(item.p4_id, wrapper);
+                };
+
+                resultBox.appendChild(div);
+            });
+        });
+}
+
+function addP4(p4_id, wrapper) {
+    if (selectedP4.includes(p4_id)) return;
+
+    selectedP4.push(p4_id);
+    syncInput();
+
+    const selectedBox = document.querySelector(".selected-ms");
+
+    const badge = document.createElement("span");
+    badge.classList.add("badge", "bg-primary", "me-1", "mb-1", "p-2");
+    badge.innerHTML = `${p4_id} ✖`;
+
+    badge.onclick = function () {
+        selectedP4 = selectedP4.filter(id => id !== p4_id);
+        syncInput();
+        badge.remove();
+    };
+
+    selectedBox.appendChild(badge);
+
+    wrapper.querySelector("input").value = "";
+    wrapper.querySelector(".ms-results").innerHTML = "";
+}
+</script>
+{% endblock %}

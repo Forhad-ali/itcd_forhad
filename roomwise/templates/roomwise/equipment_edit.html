@@ -1,0 +1,39 @@
+{% extends 'baseroom.html' %}
+
+{% block content %}
+
+<div class="card p-4 shadow-sm">
+
+    <h4>Edit Equipment</h4>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="mb-3">
+
+            <label>Equipment Name</label>
+
+            <input type="text"
+                   name="equipment_name"
+                   value="{{ equipment.equipment_name }}"
+                   class="form-control"
+                   required>
+
+        </div>
+
+        <button type="submit"
+                class="btn btn-success">
+            Update
+        </button>
+
+        <a href="{% url 'equipment_add' equipment.system.sid %}"
+           class="btn btn-secondary">
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,285 @@
+{% extends "installation/base_nav.html" %}
+
+{% block title %}Installation Management{% endblock %}
+
+{% block content %}
+{% block extra_css %}
+<style>
+    #installationTable {
+        font-size: 12px;
+    }
+
+    #installationTable th,
+    #installationTable td {
+        padding: 6px 8px;
+        white-space: nowrap;
+    }
+
+    #installationTable .form-control-sm,
+    #installationTable .form-select-sm {
+        font-size: 12px;
+        padding: 3px 6px;
+        min-width: 95px;
+    }
+
+    /* ABD Number */
+    #installationTable th.abd-column,
+    #installationTable td.abd-column {
+        width: 85px;
+        min-width: 85px;
+        max-width: 85px;
+    }
+
+    #installationTable .abd-input {
+        width: 75px !important;
+        min-width: 75px !important;
+        max-width: 75px !important;
+    }
+
+    /* Start Date + End Date */
+    #installationTable th:nth-child(4),
+    #installationTable td:nth-child(4),
+    #installationTable th:nth-child(5),
+    #installationTable td:nth-child(5) {
+        width: 105px;
+        min-width: 105px;
+        max-width: 105px;
+    }
+
+    #installationTable .date-input {
+        width: 95px !important;
+        min-width: 95px !important;
+        max-width: 95px !important;
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+
+    /* System + Facility */
+    #installationTable td:nth-child(6),
+    #installationTable td:nth-child(7) {
+        max-width: 130px;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    /* SAW Program */
+    #installationTable th:nth-child(8),
+    #installationTable td:nth-child(8) {
+        width: 180px;
+        min-width: 180px;
+        max-width: 180px;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    #installationTable .btn-sm {
+        padding: 3px 6px;
+        font-size: 12px;
+    }
+
+    .table-card {
+        padding: 12px;
+    }
+</style>
+{% endblock %}
+
+<div class="container-fluid py-3 px-3">
+
+    <div class="top-card mb-3">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+            <h2 class="m-0">
+                <i class="bi bi-database-fill"></i>
+                Installation Management
+            </h2>
+
+            <a href="{% url 'add_installation' %}"
+            class="btn btn-sm text-white"
+            style="background-color:#0d3b66; border-color:#0d3b66;">
+                <i class="bi bi-plus-circle"></i>
+                Add Milestone
+            </a>
+
+        </div>
+    </div>
+
+    <div class="table-card">
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <form method="get">
+                    <input type="text"
+                        name="search"
+                        value="{{ search }}"
+                        class="form-control"
+                        placeholder="Search MS ID">
+                </form>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle" id="installationTable">
+
+                <thead class="custom-head">
+                    <tr>
+                        <th>MS ID</th>
+                        <th>Status</th>
+                        <th class="abd-column">ABD Number</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>System</th>
+                        <th>Facility</th>
+                        <th>SAW Program</th>
+                        <th>Unit</th>
+                        <th>Type</th>
+                        <th>Stage</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for entry in entries %}
+
+                    <tr>
+                        <td>{{ entry.ms_id }}</td>
+
+                        <td>
+                            <select class="form-select form-select-sm"
+                                    data-id="{{ entry.id }}"
+                                    onchange="updateInstallationField(this.dataset.id, 'status', this.value)">
+
+                                <option value="Completed"
+                                {% if entry.status == 'Completed' %}selected{% endif %}>
+                                    Completed
+                                </option>
+
+                                <option value="Ongoing"
+                                {% if entry.status == 'Ongoing' %}selected{% endif %}>
+                                    Ongoing
+                                </option>
+
+                                <option value="Not Started Yet"
+                                {% if entry.status == 'Not Started Yet' %}selected{% endif %}>
+                                    Not Started Yet
+                                </option>
+
+                            </select>
+                        </td>
+
+                        <td class="abd-column">
+                            <input type="text"
+                                   value="{{ entry.abd_number }}"
+                                   class="form-control form-control-sm abd-input"
+                                   data-id="{{ entry.id }}"
+                                   onchange="updateInstallationField(this.dataset.id, 'abd_number', this.value)">
+                        </td>
+
+                        <td>
+                            <input type="date"
+                                   value="{% if entry.start_date %}{{ entry.start_date|date:'Y-m-d' }}{% endif %}"
+                                   class="form-control form-control-sm date-input"
+                                   data-id="{{ entry.id }}"
+                                   onchange="updateInstallationField(this.dataset.id, 'start_date', this.value)">
+                        </td>
+
+                        <td>
+                            <input type="date"
+                                   value="{% if entry.end_date %}{{ entry.end_date|date:'Y-m-d' }}{% endif %}"
+                                   class="form-control form-control-sm date-input"
+                                   data-id="{{ entry.id }}"
+                                   onchange="updateInstallationField(this.dataset.id, 'end_date', this.value)">
+                        </td>
+
+                        <td>{{ entry.system }}</td>
+                        <td>{{ entry.facility }}</td>
+                        <td>{{ entry.saw_program }}</td>
+                        <td>{{ entry.unit }}</td>
+                        <td>{{ entry.type }}</td>
+
+                        <td>
+                            <span class="badge-stage">
+                                {{ entry.stage }}
+                            </span>
+                        </td>
+
+                        <td class="action-btns">
+                            <a href="{% url 'edit_installation' entry.id %}"
+                               class="btn btn-warning btn-sm">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+
+                            <a href="{% url 'delete_installation' entry.id %}"
+                               class="btn btn-danger btn-sm"
+                               onclick="return confirm('Delete this installation?')">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="12" class="text-center text-muted py-4">
+                            No installation data found
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+{% if entries.has_other_pages %}
+<nav class="mt-3">
+    <ul class="pagination pagination-sm justify-content-center">
+
+        {% if entries.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ entries.previous_page_number }}">Previous</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Previous</span>
+            </li>
+        {% endif %}
+
+        {% for num in entries.paginator.page_range %}
+            {% if entries.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+            {% elif num > entries.number|add:'-3' and num < entries.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if entries.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ entries.next_page_number }}">Next</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Next</span>
+            </li>
+        {% endif %}
+
+    </ul>
+</nav>
+{% endif %}
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    setupTableSearch("searchInput", "installationTable");
+
+    function updateInstallationField(id, field, value) {
+        updateField(`/installation/update-entry/${id}/`, field, value);
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'baseroom.html' %}
+{% block content %}
+
+<a class="btn btn-primary mb-2"
+   href="{% url 'facility_add' %}">
+    Add Facility
+</a>
+
+<table class="table table-bordered">
+
+    <tr>
+        <th>SL</th>
+        <th>Facility</th>
+        <th>Title</th>
+        <th width="180">Action</th>
+    </tr>
+
+    {% for i in data %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ i.facility }}</td>
+        <td>{{ i.facility_title }}</td>
+
+        <td>
+
+            <a href="{% url 'facility_edit' i.fid %}"
+               class="btn btn-warning btn-sm">
+                Edit
+            </a>
+
+            <a href="{% url 'facility_delete' i.fid %}"
+               class="btn btn-danger btn-sm"
+               onclick="return confirm('Delete this facility?')">
+                Delete
+            </a>
+
+        </td>
+
+    </tr>
+    {% endfor %}
+
+</table>
+
+{% endblock %}

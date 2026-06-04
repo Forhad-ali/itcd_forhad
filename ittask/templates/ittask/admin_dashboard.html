@@ -1,8 +1,10 @@
 {% extends 'base2.html' %}
-{% block title %}Manager Dashboard{% endblock %}
+{% block title %}Admin Dashboard{% endblock %}
 {% block content %}
-<h2 class="mb-4">Manager Dashboard</h2>
-<div class="row g-4">
+<h2 class="mb-4">Admin Dashboard</h2>
+
+
+<div class="row g-4 mt-2">
   <div class="col-md-4">
     <div class="card dashboard-card shadow-sm border-0">
       <div class="card-body text-center">
@@ -35,7 +37,7 @@
 </div>
 
 
-<div class="row g-8">
+<div class="row g-4 mt-2">
   <div class="col-md-4">
     <div class="card dashboard-card shadow-sm border-0">
       <div class="card-body text-center">
@@ -50,9 +52,19 @@
   <div class="col-md-4">
     <div class="card dashboard-card shadow-sm border-0">
       <div class="card-body text-center">
-        <h5 class="card-title">ITCD </h5>
-        <a href="{% url 'facility_grid' %}" class="btn btn-warning">
-          ITCD 
+        <h5 class="card-title">ITCD InSAW</h5>
+        <a href="/installation/dashboard/" class="btn btn-warning">
+          InSAW
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card dashboard-card shadow-sm border-0">
+      <div class="card-body text-center">
+        <h5 class="card-title">RoomWise </h5>
+        <a href="/roomwise/device/list" class="btn btn-warning">
+          RoomWise 
         </a>
       </div>
     </div>
@@ -62,7 +74,7 @@
     <div class="card dashboard-card shadow-sm border-0">
       <div class="card-body text-center">
         <h5 class="card-title">👥 User Management</h5>
-        <p class="card-text">Create and manage user accounts & roles.</p>
+        <p class="card-text">Create and manage user </p>
         <a href="{% url 'user_list' %}" class="btn btn-success">Manage Users</a>
       </div>
     </div>

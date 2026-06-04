@@ -1,0 +1,240 @@
+<!-- templates/installation/base_nav.html -->
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Installation System{% endblock %}</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Common CSS -->
+    <link rel="stylesheet"
+          href="{% static 'css/installation.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container-fluid">
+
+        <a class="navbar-brand fw-bold" href="/dashboard/">ITCD Systems</a>
+
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#mainNavbar"
+                aria-controls="mainNavbar"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav ms-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'facility_dashboard_all' %}active{% endif %}"
+                       href="{% url 'facility_dashboard_all' %}">
+                        Dashboard All
+                    </a>
+                </li>
+
+                <!-- P9 Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'p9_entry' or request.resolver_match.url_name == 'p9_display_list' %}active{% endif %}"
+                       href="#"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        P9
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'p9_entry' %}active{% endif %}"
+                               href="{% url 'p9_entry' %}">
+                                P9 Entry
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'p9_display_list' %}active{% endif %}"
+                               href="{% url 'p9_display_list' %}">
+                                P9 List
+                            </a>
+                        </li>
+
+                         <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'p9_dashboard' %}active{% endif %}"
+                               href="{% url 'p9_dashboard' %}">
+                                P9 Dashboard
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- P8 Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'p8_entry' or request.resolver_match.url_name == 'p8_display_list' %}active{% endif %}"
+                       href="#"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        P8
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'p8_entry' %}active{% endif %}"
+                               href="{% url 'p8_entry' %}">
+                                P8 Entry
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'p8_display_list' %}active{% endif %}"
+                               href="{% url 'p8_display_list' %}">
+                                P8 List
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'p8_dashboard' %}active{% endif %}"
+                               href="{% url 'p8_dashboard' %}">
+                                P8 Dashboard
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- P4 Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'p4_entry' or request.resolver_match.url_name == 'p4_display_list' %}active{% endif %}"
+                       href="#"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        P4
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'p4_entry' %}active{% endif %}"
+                               href="{% url 'p4_entry' %}">
+                                P4 Entry
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'p4_display_list' %}active{% endif %}"
+                               href="{% url 'p4_display_list' %}">
+                                P4 List
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'p4_dashboard' %}active{% endif %}"
+                               href="{% url 'p4_dashboard' %}">
+                                P4 Dashboard
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                 <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'p4_entry' or request.resolver_match.url_name == 'p4_display_list' %}active{% endif %}"
+                       href="#"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        F2
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'f2_tb' %}active{% endif %}"
+                               href="{% url 'f2_tb' %}">
+                                F2 TB
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                               href="{% url 'dashboard' %}">
+                                F2 Dashboard
+                            </a>
+                        </li>                        
+                    </ul>
+                </li>
+
+
+                <!-- Installation Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'installation_list' or request.resolver_match.url_name == 'add_installation' %}active{% endif %}"
+                       href="#"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        Installation
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'installation_list' %}active{% endif %}"
+                               href="{% url 'installation_list' %}">
+                                Milestone List
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'add_installation' %}active{% endif %}"
+                               href="{% url 'add_installation' %}">
+                                Milestone Add
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Reports / Dashboard Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'f2_tb' or request.resolver_match.url_name == 'dashboard' or request.resolver_match.url_name == 'facility_dashboard' %}active{% endif %}"
+                       href="#"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        Reports
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'facility_dashboard' %}active{% endif %}"
+                               href="{% url 'facility_dashboard' %}">
+                                Facility Wise System
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
+
+    </div>
+</nav>
+
+<main class="container-fluid mt-4">
+    {% block content %}
+    {% endblock %}
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Common JS -->
+<script src="{% static 'js/installation.js' %}"></script>
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

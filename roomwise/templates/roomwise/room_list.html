@@ -1,0 +1,128 @@
+{% extends 'baseroom.html' %}
+
+{% block content %}
+<div class="row align-items-center mb-4">
+
+    <div class="col-md-6">
+        <h3 class="mb-0">Facilities</h3>
+    </div>
+
+    <div class="col-md-6 text-end">
+        <input type="text"
+               id="facilitySearch"
+               class="form-control d-inline-block"
+               style="max-width:350px;"
+               placeholder="Search Facility Code...">
+    </div>
+
+</div>
+
+
+<div class="row">
+
+    {% for facility in facilities %}
+
+    <div class="col-md-3 mb-3 facility-item"
+        data-facility="{{ facility.facility|lower }}">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body">
+
+                <h5>{{ facility.facility }}</h5>
+
+                <a href="{% url 'facility_rooms' facility.fid %}"
+                class="btn btn-primary btn-sm">
+                    Rooms Add
+                </a>
+
+                <a href="{% url 'facility_system_setup' facility.fid %}"
+                class="btn btn-primary btn-sm">
+                    Systems Assign
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+
+{% if selected_facility %}
+
+<hr>
+
+<div class="d-flex justify-content-between align-items-center">
+
+    <h4>
+        Rooms of {{ selected_facility.facility }}
+    </h4>
+
+    <a href="{% url 'room_add' %}"
+       class="btn btn-success">
+        Add Room
+    </a>
+
+</div>
+
+<table class="table table-bordered mt-3">
+
+    <tr>
+        <th>ID</th>
+        <th>Room KKS</th>
+        <th>Room Title</th>
+    </tr>
+
+    {% for room in rooms %}
+
+    <tr>
+        <td>{{ room.rmid }}</td>
+        <td>{{ room.room_kks }}</td>
+        <td>{{ room.room_title }}</td>
+    </tr>
+
+    {% empty %}
+
+    <tr>
+        <td colspan="3" class="text-center">
+            No rooms found
+        </td>
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+{% endif %}
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const searchBox = document.getElementById('facilitySearch');
+
+    searchBox.addEventListener('keyup', function () {
+
+        let keyword = this.value.toLowerCase();
+
+        document.querySelectorAll('.facility-item').forEach(function(card){
+
+            let facilityCode = card.dataset.facility;
+
+            if (facilityCode.includes(keyword)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+
+        });
+
+    });
+
+});
+</script>
+{% endblock %}

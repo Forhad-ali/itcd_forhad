@@ -2,7 +2,7 @@
 {% block title %}Manager Dashboard{% endblock %}
 {% block content %}
 <h2 class="mb-4">Manager Dashboard</h2>
-<div class="row g-4">
+<div class="row g-4 mt-2">
   <div class="col-md-4">
     <div class="card dashboard-card shadow-sm border-0">
       <div class="card-body text-center">
@@ -12,11 +12,11 @@
     </div>
   </div>
 
-  <div class="col-md-4">
+  <div class="col-md-4 ">
     <div class="card dashboard-card shadow-sm border-0">
       <div class="card-body text-center">
         <h5 class="card-title">ITCD System</h5>
-        <a href="{% url 'facility_grid' %}" class="btn btn-warning">
+        <a href="{% url 'system_dashboard' %}" class="btn btn-warning">
           ITCD Systems
         </a>
       </div>
@@ -35,7 +35,7 @@
 </div>
 
 
-<div class="row g-8">
+<div class="row g-4 mt-2">
   <div class="col-md-4">
     <div class="card dashboard-card shadow-sm border-0">
       <div class="card-body text-center">
@@ -50,9 +50,9 @@
   <div class="col-md-4">
     <div class="card dashboard-card shadow-sm border-0">
       <div class="card-body text-center">
-        <h5 class="card-title">ITCD </h5>
-        <a href="{% url 'facility_grid' %}" class="btn btn-warning">
-          ITCD 
+        <h5 class="card-title">ITCD InSAW</h5>
+        <a href="/installation/dashboard/" class="btn btn-warning">
+          InSAW
         </a>
       </div>
     </div>
@@ -60,9 +60,9 @@
   <div class="col-md-4">
     <div class="card dashboard-card shadow-sm border-0">
       <div class="card-body text-center">
-        <h5 class="card-title">ITCD </h5>
-        <a href="{% url 'camera_app:image_list' %}" class="btn btn-warning">
-          ITCD 
+        <h5 class="card-title">RoomWise </h5>
+        <a href="/roomwise/device/list" class="btn btn-warning">
+          RoomWise 
         </a>
       </div>
     </div>

@@ -1,0 +1,183 @@
+<!-- ================= FULL NAVBAR ================= -->
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+
+    <div class="container-fluid">
+
+        <!-- Brand -->
+        <a class="navbar-brand fw-bold" href="{% url 'installation_list' %}">
+            Installation System
+        </a>
+
+        <!-- Mobile toggle -->
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#mainNavbar"
+                aria-controls="mainNavbar"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Menu -->
+        <div class="collapse navbar-collapse" id="mainNavbar">
+
+            <ul class="navbar-nav ms-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'facility_dashboard_all' %}active{% endif %}"
+                       href="{% url 'facility_dashboard_all' %}">
+                        Dashboard All
+                    </a>
+                </li>
+
+                <!-- P9 -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'p9_entry' or request.resolver_match.url_name == 'p9_display_list' %}active{% endif %}"
+                       href="#"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        P9
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'p9_entry' %}active{% endif %}"
+                               href="{% url 'p9_entry' %}">
+                                P9 Entry
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'p9_display_list' %}active{% endif %}"
+                               href="{% url 'p9_display_list' %}">
+                                P9 List
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- P8 -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'p8_entry' or request.resolver_match.url_name == 'p8_display_list' %}active{% endif %}"
+                       href="#"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        P8
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'p8_entry' %}active{% endif %}"
+                               href="{% url 'p8_entry' %}">
+                                P8 Entry
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'p8_display_list' %}active{% endif %}"
+                               href="{% url 'p8_display_list' %}">
+                                P8 List
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- P4 -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'p4_entry' or request.resolver_match.url_name == 'p4_display_list' %}active{% endif %}"
+                       href="#"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        P4
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'p4_entry' %}active{% endif %}"
+                               href="{% url 'p4_entry' %}">
+                                P4 Entry
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'p4_display_list' %}active{% endif %}"
+                               href="{% url 'p4_display_list' %}">
+                                P4 List
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Installation -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'installation_list' or request.resolver_match.url_name == 'add_installation' %}active{% endif %}"
+                       href="#"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        Installation
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'installation_list' %}active{% endif %}"
+                               href="{% url 'installation_list' %}">
+                                Installation List
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'add_installation' %}active{% endif %}"
+                               href="{% url 'add_installation' %}">
+                                Add Installation
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Reports -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'f2_tb' or request.resolver_match.url_name == 'dashboard' or request.resolver_match.url_name == 'facility_dashboard' %}active{% endif %}"
+                       href="#"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        Reports
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'f2_tb' %}active{% endif %}"
+                               href="{% url 'f2_tb' %}">
+                                F2 TB
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                               href="{% url 'dashboard' %}">
+                                Dashboard
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'facility_dashboard' %}active{% endif %}"
+                               href="{% url 'facility_dashboard' %}">
+                                Facility Wise System
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</nav>

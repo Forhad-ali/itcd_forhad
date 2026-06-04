@@ -1,0 +1,185 @@
+{% extends "installation/base_nav.html" %}
+
+{% block title %}P9 Entry Form{% endblock %}
+
+
+{% block extra_css %}
+<style>
+    .main-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    .form-check-input {
+        background-color: #198754 !important;
+        border-color: #cd7640 !important;
+    }
+    .wide-input input,
+    .wide-input select,
+    .wide-input textarea {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="main-card">
+
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>P9 Entry Form</h2>
+
+            <a href="{% url 'p9_display_list' %}" class="btn btn-secondary">
+                Back
+            </a>
+        </div>
+
+        <!-- FORM -->
+        <form method="POST">
+            {% csrf_token %}
+
+            <input type="hidden" name="p8_ids" id="p8_ids_input">
+
+            <div class="row g-3">
+
+                <!-- P9 ID -->
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="mb-0 text-nowrap">P9 ID</label>
+
+                        <div class="wide-input flex-grow-1" >
+                            {{ form.p9_id }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- P8 SEARCH -->
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="mb-0" style="white-space: nowrap;">P8 ID</label>
+
+                        <div class="ms-wrapper flex-grow-1">
+                            <input type="text"
+                                class="form-control"
+                                placeholder="Search P8 ID..."
+                                onkeyup="searchP8(this)">
+
+                            <div class="ms-results"></div>
+                        </div>
+                    </div>
+
+                    <div class="selected-ms mt-2"></div>
+                </div>
+            </div>
+
+            <!-- SECOND ROW -->
+            <div class="row g-3 mt-3">
+
+                <div class="col-md-3">
+                    <label>Completed</label>
+
+                    <div class="form-check mt-2">
+                        {{ form.completed }}
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <label>Start Date</label>
+                    {{ form.start_date }}
+                </div>
+
+                <div class="col-md-3">
+                    <label>End Date</label>
+                    {{ form.end_date }}
+                </div>
+
+            </div>
+
+            <!-- SUBMIT -->
+            <div class="text-end mt-4">
+                <button type="submit" class="btn btn-success px-4">
+                    Save P9
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let selectedP8 = [];
+
+function syncInput() {
+    document.getElementById("p8_ids_input").value = selectedP8.join(",");
+}
+
+function searchP8(input) {
+    const query = input.value.trim();
+    const wrapper = input.parentElement;
+    const resultBox = wrapper.querySelector(".ms-results");
+
+    if (query.length < 2) {
+        resultBox.innerHTML = "";
+        return;
+    }
+
+    fetch(`/installation/search-p8/?q=${encodeURIComponent(query)}`)
+        .then(res => res.json())
+        .then(data => {
+            resultBox.innerHTML = "";
+
+            if (data.length === 0) {
+                resultBox.innerHTML = `<div class="p-2 text-muted">No result found</div>`;
+                return;
+            }
+
+            data.forEach(item => {
+                if (selectedP8.includes(item.p8_id)) return;
+
+                const div = document.createElement("div");
+                div.innerText = item.p8_id;
+
+                div.onclick = function () {
+                    addP8(item.p8_id, wrapper);
+                };
+
+                resultBox.appendChild(div);
+            });
+        });
+}
+
+function addP8(p8_id, wrapper) {
+    if (selectedP8.includes(p8_id)) return;
+
+    selectedP8.push(p8_id);
+    syncInput();
+
+    const selectedBox = document.querySelector(".selected-ms");
+
+    const badge = document.createElement("span");
+    badge.classList.add("badge", "bg-primary", "me-1", "mb-1", "p-2");
+    badge.innerHTML = `${p8_id} ✖`;
+
+    badge.onclick = function () {
+        selectedP8 = selectedP8.filter(id => id !== p8_id);
+        syncInput();
+        badge.remove();
+    };
+
+    selectedBox.appendChild(badge);
+
+    wrapper.querySelector("input").value = "";
+    wrapper.querySelector(".ms-results").innerHTML = "";
+}
+</script>
+{% endblock %}

@@ -1,0 +1,156 @@
+{% extends "installation/base_nav.html" %}
+
+{% block title %}Installation Form{% endblock %}
+
+{% block extra_css %}
+<style>
+    .main-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    .form-check-input {
+        background-color: #198754 !important;
+        border-color: #cd7640 !important;
+    }
+
+    .wide-input input,
+    .wide-input select,
+    .wide-input textarea {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+    <div class="main-card">
+
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Installation Entry Form</h2>
+
+            <a href="{% url 'installation_list' %}" class="btn btn-secondary">
+                Back
+            </a>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- ROW 1 -->
+            <div class="row g-3 mb-2">
+
+                <div class="col-md-3">
+                    <label>MS ID Full</label>
+                    <div class="wide-input">
+                        {{ form.ms_id_full }}
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <label>MS ID</label>
+                    <div class="wide-input">
+                        {{ form.ms_id }}
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <label>SAW Program</label>
+                    <div class="wide-input">
+                        {{ form.saw_program }}
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <label>Type</label>
+                    <div class="field-small">
+                        {{ form.type }}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ROW 2 -->
+            <div class="row g-3 mb-2">
+
+                <div class="col-md-3">
+                    <label>Status</label>
+                    <div class="field-medium">
+                        {{ form.status }}
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <label>System</label>
+                    <div class="field-small">
+                        {{ form.system }}
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <label>Unit</label>
+                    <div class="field-small">
+                        {{ form.unit }}
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <label>Stage</label>
+                    <div class="field-small">
+                        {{ form.stage }}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ROW 3 -->
+            <div class="row g-3 mb-3">
+
+                <div class="col-md-3">
+                    <label>Facility</label>
+                    <div class="wide-input">
+                        {{ form.facility }}
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <label>ABD Number</label>
+                    <div class="wide-input">
+                        {{ form.abd_number }}
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <label>Start Date</label>
+                    <div class="field-small">
+                        {{ form.start_date }}
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <label>End Date</label>
+                    <div class="field-small">
+                        {{ form.end_date }}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- BUTTON -->
+            <div class="text-end">
+                <button type="submit" class="btn btn-success px-4">
+                    Save Installation
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

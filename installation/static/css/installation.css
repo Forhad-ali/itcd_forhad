@@ -1,0 +1,120 @@
+body {
+    background: #f4f7fb;
+}
+
+.top-card,
+.table-card,
+.form-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    overflow: visible;
+}
+
+.search-box {
+    border-radius: 10px;
+}
+
+.table th {
+    white-space: nowrap;
+}
+
+.badge {
+    font-size: 12px;
+}
+
+.action-btns .btn {
+    margin-right: 5px;
+}
+
+.custom-head th {
+    background-color: #d2ede1 !important;
+    color: rgb(114, 44, 44) !important;
+}
+
+.associate-col {
+    width: 190px;
+    min-width: 180px;
+    max-width: 200px;
+    white-space: normal !important;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    vertical-align: top;
+}
+
+.main-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    overflow: visible;
+}
+
+label {
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.form-control,
+.form-select {
+    border-radius: 10px;
+}
+
+.ms-wrapper {
+    position: relative;
+    overflow: visible;
+}
+
+.ms-results {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 99999;
+    background: #fff;
+    max-height: 200px;
+    overflow-y: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.ms-results div {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+    background: #f8f9fa;
+    cursor: pointer;
+}
+
+.ms-results div:hover {
+    background: #0d6efd;
+    color: white;
+}
+
+.form-check-input {
+    background-color: #198754 !important;
+    border-color: #cd7640 !important;
+}
+
+.card-box {
+    border-radius: 15px;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.facility-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: white;
+    background: #0a4ead;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+}
+
+.system-card.bg-white {
+    color: #000;
+    border: 1px solid #ddd;
+}

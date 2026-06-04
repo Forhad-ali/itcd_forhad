@@ -1,0 +1,182 @@
+{% extends "installation/base_nav.html" %}
+
+{% block title %}P4 Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .number {
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    .filter-card {
+        cursor: pointer;
+    }
+
+    .filter-card.active {
+        outline: 2px solid #0d6efd;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <h2 class="mb-4">P4 Dashboard</h2>
+
+    <div class="row g-3">
+
+        <div class="col-md-3">
+            <div class="card-box text-center filter-card" data-type="all">
+                <div>P4</div>
+                <div class="number">{{ total_p4 }}</div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card-box text-center filter-card" data-type="completed">
+                <div>Completed</div>
+                <div class="number">{{ completed_p4 }}</div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card-box text-center filter-card" data-type="pending">
+                <div>Pending</div>
+                <div class="number">{{ pending_p4 }}</div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card-box text-center filter-card" data-type="ms">
+                <div>MS Linked</div>
+                <div class="number">{{ total_ms }}</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row mt-4 g-3">
+
+        <div class="col-md-6">
+            <div class="card-box" style="height: 350px; display: flex; flex-direction: column;">
+                <h5 class="mb-2">P4 Status Distribution</h5>
+
+                <div style="flex: 1; display: flex; align-items: center; justify-content: center;">
+                    <div style="width: 100%; max-width: 260px; height: 260px;">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card-box" style="height: 350px; display: flex; flex-direction: column;">
+                <h5 class="mb-2">Yearly Completed P4</h5>
+
+                <div style="flex: 1;">
+                    <canvas id="yearChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const statusLabels = {{ status_labels|safe }};
+const statusValues = {{ status_values|safe }};
+const yearLabels = {{ year_labels|safe }};
+const yearValues = {{ year_values|safe }};
+
+new Chart(document.getElementById("statusChart"), {
+    type: "pie",
+    data: {
+        labels: statusLabels,
+        datasets: [{
+            data: statusValues
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: "bottom"
+            }
+        },
+        onClick: function(e, elements) {
+            if (elements.length > 0) {
+                const index = elements[0].index;
+                const value = statusLabels[index];
+
+                window.open(
+                    `/installation/p4/dashboard/filter/?chart=status&value=${encodeURIComponent(value)}`,
+                    "_blank"
+                );
+            }
+        }
+    }
+});
+
+new Chart(document.getElementById("yearChart"), {
+    type: "bar",
+    data: {
+        labels: yearLabels,
+        datasets: [{
+            label: "Completed",
+            data: yearValues
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        onClick: function(e, elements) {
+            if (elements.length > 0) {
+                const index = elements[0].index;
+                const year = yearLabels[index];
+
+                window.open(
+                    `/installation/p4/dashboard/filter/?chart=year&value=${encodeURIComponent(year)}`,
+                    "_blank"
+                );
+            }
+        }
+    }
+});
+
+document.querySelectorAll(".filter-card").forEach(card => {
+    card.addEventListener("click", function () {
+        document.querySelectorAll(".filter-card").forEach(c => {
+            c.classList.remove("active");
+        });
+
+        this.classList.add("active");
+
+        const type = this.dataset.type;
+
+        window.open(
+            `/installation/p4/dashboard/filter/?type=${type}`,
+            "_blank"
+        );
+    });
+});
+</script>
+{% endblock %}

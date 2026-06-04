@@ -1,0 +1,211 @@
+{% extends "installation/base_nav.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card-box {
+        border-radius: 15px;
+        padding: 20px;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .number {
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    .filter-card {
+        cursor: pointer;
+    }
+
+    .filter-card.active {
+        outline: 2px solid #0d6efd;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <h2 class="mb-4">Installation Dashboard</h2>
+
+    <div class="row g-3">
+
+        <div class="col-md-3">
+            <div class="card-box text-center filter-card" data-type="facility">
+                <div>Facility</div>
+                <div class="number">{{ total_facility }}</div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card-box text-center filter-card" data-type="system">
+                <div>System</div>
+                <div class="number">{{ total_system }}</div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card-box text-center filter-card" data-type="ms">
+                <div>Milestone</div>
+                <div class="number">{{ total_ms_id }}</div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card-box text-center filter-card" data-type="saw">
+                <div>SAW Program</div>
+                <div class="number">{{ total_saw_program }}</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row mt-4 g-3">
+
+        <div class="col-md-6">
+            <div class="card-box" style="height: 350px; display: flex; flex-direction: column;">
+
+                <h5 class="mb-2">Status Distribution</h5>
+
+                <div style="flex: 1; display: flex; align-items: center; justify-content: center;">
+                    <div style="width: 100%; max-width: 260px; height: 260px;">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card-box" style="height: 350px; display: flex; flex-direction: column;">
+
+                <h5 class="mb-2">Yearly Completed</h5>
+
+                <div style="flex: 1;">
+                    <canvas id="yearChart"></canvas>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+let statusChart;
+let yearChart;
+
+function loadCharts(statusLabels, statusValues, yearLabels, yearValues) {
+    if (statusChart) statusChart.destroy();
+    if (yearChart) yearChart.destroy();
+
+    statusChart = new Chart(document.getElementById("statusChart"), {
+        type: "pie",
+
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                data: statusValues
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    position: "bottom"
+                }
+            },
+
+            onClick: function(e, elements) {
+                if (elements.length > 0) {
+                    const index = elements[0].index;
+                    const label = statusLabels[index];
+
+                    window.open(
+                        "{% url 'dashboard_filter' %}?chart=status&value=" + encodeURIComponent(label),
+                        "_blank"
+                    );
+                }
+            }
+        }
+    });
+
+    yearChart = new Chart(document.getElementById("yearChart"), {
+        type: "bar",
+
+        data: {
+            labels: yearLabels,
+            datasets: [{
+                label: "Completed",
+                data: yearValues
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+
+            onClick: function(e, elements) {
+                if (elements.length > 0) {
+                    const index = elements[0].index;
+                    const year = yearLabels[index];
+
+                    window.open(
+                        "{% url 'dashboard_filter' %}?chart=year&value=" + encodeURIComponent(year),
+                        "_blank"
+                    );
+                }
+            }
+        }
+    });
+}
+
+loadCharts(
+    {{ status_labels|safe }},
+    {{ status_values|safe }},
+    {{ year_labels|safe }},
+    {{ year_values|safe }}
+);
+
+document.querySelectorAll(".filter-card").forEach(card => {
+    card.addEventListener("click", function () {
+        document.querySelectorAll(".filter-card").forEach(c => {
+            c.classList.remove("active");
+        });
+
+        this.classList.add("active");
+
+        const type = this.dataset.type;
+
+        window.open(
+            `/installation/dashboard/filter/?type=${type}`,
+            "_blank"
+        );
+    });
+});
+</script>
+{% endblock %}

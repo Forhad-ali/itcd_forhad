@@ -1,0 +1,241 @@
+{% extends 'baseroom.html' %}
+
+{% block content %}
+
+<style>
+    .custom-header {
+        background: linear-gradient(135deg, #4b6cb7, #eeeff1);
+        color: #fff;
+        font-weight: 600;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
+        padding: 12px 16px;
+        letter-spacing: 0.3px;
+    }
+
+    .room-kks {
+        color: #7b2ff7;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-left: 4px solid #7b2ff7;
+        background: #f3f0ff;
+        border-radius: 4px;
+    }
+
+    .facility-card {
+        background: rgba(249, 248, 248, 0.938);
+        backdrop-filter: blur(10px);
+        padding: 12px 18px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 20px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .device-box {
+        background: #ffffff;
+        border: 1px solid #e5e5e5;
+        padding: 10px 12px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .device-title {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .device-kks {
+        color: #666;
+        font-size: 13px;
+    }
+
+    .device-box {
+        min-width: 220px;
+        background: #fff;
+        border: 1px solid #e5e5e5;
+        padding: 12px;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+
+    .nav-pills .nav-link{
+        margin-right:6px;
+        border-radius:8px;
+        font-weight:600;
+    }
+
+    .nav-pills .nav-link.active{
+        background:#4b6cb7;
+    }
+    .room-box{
+        width: 220px;
+        min-width: 220px;
+        max-width: 220px;
+
+        background: #f3f0ff;
+        border: 1px solid #7b2ff7;
+        color: #4a148c;
+
+        padding: 12px;
+        border-radius: 10px;
+        font-weight: 700;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .kks-box,
+    .title-box,
+    .tel-box{
+        min-height: 52px;
+        display: flex;
+        align-items: center;
+        border-radius: 10px;
+        padding: 12px;
+        word-break: break-word;
+    }
+
+    .kks-box{
+        background:#e3f2fd;
+        border:1px solid #2196f3;
+        color:#0d47a1;
+    }
+
+    .title-box{
+        background:#e8f5e9;
+        border:1px solid #4caf50;
+        color:#1b5e20;
+    }
+
+    .tel-box{
+        background:#fff3e0;
+        border:1px solid #ff9800;
+        color:#e65100;
+    }
+
+    .room-kks{
+        color:#7b2ff7;
+        font-weight:700;
+        padding:6px 12px;
+        border-left:4px solid #7b2ff7;
+        background:#f3f0ff;
+        border-radius:4px;
+    }
+</style>
+
+<h3 class="facility-card mb-4">
+    {{ facility.facility }} : {{ facility.facility_title }}
+</h3>
+
+<!-- SYSTEM NAVBAR -->
+<ul class="nav nav-pills mb-4">
+
+    {% for item in system_data %}
+    <li class="nav-item">
+        <button
+            class="nav-link {% if forloop.first %}active{% endif %}"
+            data-bs-toggle="tab"
+            data-bs-target="#system{{ item.system.sid }}"
+            type="button">
+
+            {{ item.system.system_code }}
+
+        </button>
+    </li>
+    {% endfor %}
+
+</ul>
+
+<!-- TAB CONTENT -->
+<div class="tab-content">
+
+{% for item in system_data %}
+
+<div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
+     id="system{{ item.system.sid }}">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header custom-header">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+                    <strong>{{ item.system.system_code }}</strong>
+                    - {{ item.system.system_title }}
+                </div>
+
+                <div style="color:black;">
+                    <strong>MS ID:</strong>
+                    {{ item.ms_id }}
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            {% for r in item.rooms %}
+
+                {% if r.devices|length > 0 %}
+
+                <div class="border rounded p-3 mb-3">
+
+                    <!-- ROOM -->
+                    <div class="mb-3">
+                        <span class="room-kks">
+                            {{ r.room.room_kks }}
+                        </span>
+                    </div>
+
+                    <!-- DEVICES -->
+                    {% for d in r.devices %}
+
+                    <div class="row g-2 mb-2">
+
+                        <div class="col-md-3">
+                            <div class="kks-box">
+                                {{ d.device_kks }}
+                            </div>
+                        </div>
+
+                        <div class="{% if d.telephone_number %}col-md-7{% else %}col-md-9{% endif %}">
+                            <div class="title-box">
+                                {{ d.device_title }}
+                            </div>
+                        </div>
+
+                        {% if d.telephone_number %}
+                        <div class="col-md-2">
+                            <div class="tel-box">
+                                {{ d.telephone_number }}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}

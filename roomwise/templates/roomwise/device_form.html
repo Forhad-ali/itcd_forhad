@@ -1,0 +1,464 @@
+{% extends 'baseroom.html' %}
+
+{% block content %}
+
+<style>
+    .save-btn {
+        background: linear-gradient(135deg, #7b2ff7, #f107a3);
+        color: white;
+        border: 2px solid #2d2d2d;
+        padding: 10px 22px;
+        font-weight: 600;
+        border-radius: 10px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+        transition: all 0.25s ease;
+    }
+
+    .save-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.75);
+        opacity: 0.95;
+    }
+
+    .save-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .add-device {
+        background: linear-gradient(135deg, #00c6ff, #0072ff);
+        color: #fff;
+        border: 1px solid #0b3d91;
+        padding: 6px 14px;
+        font-weight: 600;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+        transition: all 0.2s ease;
+        font-size: 13px;
+    }
+
+    .add-device:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.45);
+        filter: brightness(1.05);
+    }
+
+    .add-device:active {
+        transform: scale(0.97);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .custom-header {
+        background: linear-gradient(135deg, #4b6cb7, #eeeff1);
+        color: #fff;
+        font-weight: 600;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
+        padding: 12px 16px;
+        letter-spacing: 0.3px;
+    }
+
+    .room-kks {
+        color: #7b2ff7;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-left: 4px solid #7b2ff7;
+        background: #f3f0ff;
+        border-radius: 4px;
+    }
+
+    .facility-card {
+        background: rgba(249, 248, 248, 0.938);
+        backdrop-filter: blur(10px);
+        padding: 12px 18px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 20px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .system-navbar{
+        background: #f8f9fa;
+        padding: 12px;
+        border-radius: 12px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+        border: 1px solid #dee2e6;
+    }
+
+    .nav-pills .nav-link{
+        margin-right: 8px;
+        margin-bottom: 6px;
+
+        background: #e3f2fd;
+        color: #0d47a1;
+
+        border: 1px solid #2196f3;
+        border-radius: 10px;
+
+        font-weight: 700;
+        padding: 10px 18px;
+
+        transition: all .2s ease;
+    }
+
+    .nav-pills .nav-link:hover{
+        background: #bbdefb;
+        transform: translateY(-2px);
+    }
+
+    .nav-pills .nav-link.active{
+        background: linear-gradient(135deg,#4b6cb7,#182848);
+        color: #fff;
+        border-color: #182848;
+        box-shadow: 0 4px 10px rgba(0,0,0,.25);
+    }
+</style>
+<h3 class="facility-card mb-4">
+    {{ facility.facility }} : {{ facility.facility_title }}
+</h3>
+
+<!-- SYSTEM NAVBAR -->
+<ul class="nav nav-pills mb-4 system-navbar">
+
+    {% for item in system_data %}
+    <li class="nav-item">
+        <button
+            class="nav-link {% if forloop.first %}active{% endif %}"
+            data-bs-toggle="tab"
+            data-bs-target="#system{{ item.system.sid }}"
+            type="button">
+
+            {{ item.system.system_code }}
+
+        </button>
+    </li>
+    {% endfor %}
+
+</ul>
+
+<div class="tab-content">
+{% if success %}
+<div class="alert alert-success">
+    Devices saved successfully.
+</div>
+{% endif %}
+
+
+
+{% for item in system_data %}
+
+<div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
+     id="system{{ item.system.sid }}">
+
+<div class="col-12 mb-4">
+
+<form method="post">
+    {% csrf_token %}
+
+    <input type="hidden"
+           name="system"
+           value="{{ item.system.sid }}">
+
+    <!-- SYSTEM CARD -->
+    <div class="card shadow-sm system-card"
+         data-system="{{ item.system.sid }}"
+         data-code="{{ item.system.system_code }}">
+
+        <!-- HEADER -->
+        <div class="card-header custom-header">
+
+            <div class="row align-items-center">
+
+                <div class="col-md-6">
+                    <strong>{{ item.system.system_code }}</strong>
+                    - {{ item.system.system_title }}
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="input-group input-group-sm">
+
+                        <span class="input-group-text">MS ID</span>
+
+                        <input type="text"
+                               name="ms_id"
+                               class="form-control"
+                               value="{% if item.rooms %}{{ item.rooms.0.ms_id }}{% endif %}">
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- BODY -->
+        <div class="card-body">
+
+            <div class="row">
+
+            {% for r in item.rooms %}
+
+            <div class="col-md-6 mb-3">
+
+                <div class="border rounded p-3 room-block h-100">
+
+                    <div class="mb-3 d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <span class="room-kks">{{ r.room.room_kks }}</span>
+                        </div>
+
+                        <button type="button"
+                                class="btn btn-success btn-sm add-device">
+                            + Add Device
+                        </button>
+
+                    </div>
+
+                    <div class="device-container">
+
+                        {% if r.devices %}
+
+                            {% for d in r.devices %}
+
+                            <div class="device-row row g-2 mb-2">
+
+                                {% if item.system.system_code == "CYA" or item.system.system_code == "CYB" or item.system.system_code == "CYY" or item.system.system_code == "CYS" %}
+
+                                    <div class="col-md-4">
+                                        <input type="text"
+                                            name="device_kks_{{ r.room.rmid }}[]"
+                                            class="form-control"
+                                            value="{{ d.device_kks }}"
+                                            placeholder="Device KKS">
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <select name="device_title_{{ r.room.rmid }}[]"
+                                                class="form-control">
+
+                                            <option value="">-- Select Equipment --</option>
+
+                                            {% for eq in item.equipments %}
+                                                <option value="{{ eq.equipment_name }}"
+                                                    {% if d.device_title == eq.equipment_name %}selected{% endif %}>
+                                                    {{ eq.equipment_name }}
+                                                </option>
+                                            {% endfor %}
+
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <input type="text"
+                                            name="telephone_{{ r.room.rmid }}[]"
+                                            class="form-control"
+                                            value="{{ d.telephone_number }}"
+                                            placeholder="Telephone Number">
+                                    </div>
+
+                                {% else %}
+
+                                    <div class="col-md-5">
+                                        <input type="text"
+                                            name="device_kks_{{ r.room.rmid }}[]"
+                                            class="form-control"
+                                            value="{{ d.device_kks }}"
+                                            placeholder="Device KKS">
+                                    </div>
+
+                                    <div class="col-md-7">
+                                        <select name="device_title_{{ r.room.rmid }}[]"
+                                                class="form-control">
+
+                                            <option value="">-- Select Equipment --</option>
+
+                                            {% for eq in item.equipments %}
+                                                <option value="{{ eq.equipment_name }}"
+                                                    {% if d.device_title == eq.equipment_name %}selected{% endif %}>
+                                                    {{ eq.equipment_name }}
+                                                </option>
+                                            {% endfor %}
+
+                                        </select>
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+                            {% endfor %}
+
+                        {% else %}
+
+                            <div class="device-row row g-2 mb-2">
+
+                                {% if item.system.system_code == "CYA" or item.system.system_code == "CYB" or item.system.system_code == "CYY" or item.system.system_code == "CYS" %}
+
+                                    <div class="col-md-4">
+                                        <input type="text"
+                                            name="device_kks_{{ r.room.rmid }}[]"
+                                            class="form-control"
+                                            placeholder="Device KKS">
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <select name="device_title_{{ r.room.rmid }}[]"
+                                                class="form-control">
+
+                                            <option value="">-- Select Equipment --</option>
+
+                                            {% for eq in item.equipments %}
+                                                <option value="{{ eq.equipment_name }}">
+                                                    {{ eq.equipment_name }}
+                                                </option>
+                                            {% endfor %}
+
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <input type="text"
+                                            name="telephone_{{ r.room.rmid }}[]"
+                                            class="form-control"
+                                            placeholder="Telephone Number">
+                                    </div>
+
+                                {% else %}
+
+                                    <div class="col-md-5">
+                                        <input type="text"
+                                            name="device_kks_{{ r.room.rmid }}[]"
+                                            class="form-control"
+                                            placeholder="Device KKS">
+                                    </div>
+
+                                    <div class="col-md-7">
+                                        <select name="device_title_{{ r.room.rmid }}[]"
+                                                class="form-control">
+
+                                            <option value="">-- Select Equipment --</option>
+
+                                            {% for eq in item.equipments %}
+                                                <option value="{{ eq.equipment_name }}">
+                                                    {{ eq.equipment_name }}
+                                                </option>
+                                            {% endfor %}
+
+                                        </select>
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+            </div>
+
+            <div class="d-flex justify-content-start mt-3">
+                <button type="submit" class="btn save-btn">
+                    Save {{ item.system.system_code }}
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+</form>
+
+</div>   <!-- col-12 -->
+
+</div>   <!-- tab-pane -->
+
+<!-- FIXED HIDDEN OPTIONS (INSIDE LOOP) -->
+<div id="equipment-options-{{ item.system.sid }}" style="display:none;">
+    <option value="">-- Select Equipment --</option>
+    {% for eq in item.equipments %}
+        <option value="{{ eq.equipment_name }}">
+            {{ eq.equipment_name }}
+        </option>
+    {% endfor %}
+</div>
+
+{% endfor %}
+
+
+
+</div>   <!-- tab-content -->
+
+<script>
+
+document.addEventListener('click', function(e){
+
+    if(e.target.classList.contains('add-device')){
+
+        let roomBlock = e.target.closest('.room-block');
+
+        let roomId = roomBlock
+            .querySelector('input[name^="device_kks_"]')
+            .name
+            .match(/device_kks_(\d+)/)[1];
+
+        let systemCard = e.target.closest('.system-card');
+
+        let systemId = systemCard.dataset.system;
+        let systemCode = systemCard.dataset.code;
+
+        let isTelephoneSystem =
+            ['CYA','CYB','CYY','CYS'].includes(systemCode);
+
+        let options =
+            document.getElementById(
+                'equipment-options-' + systemId
+            ).innerHTML;
+
+        let html = `
+        <div class="device-row row g-2 mb-2">
+
+            <div class="${isTelephoneSystem ? 'col-md-4' : 'col-md-5'}">
+                <input type="text"
+                       name="device_kks_${roomId}[]"
+                       class="form-control"
+                       placeholder="Device KKS">
+            </div>
+
+            <div class="${isTelephoneSystem ? 'col-md-6' : 'col-md-7'}">
+                <select name="device_title_${roomId}[]"
+                        class="form-control">
+                    ${options}
+                </select>
+            </div>
+
+            ${
+                isTelephoneSystem
+                ? `
+                <div class="col-md-2">
+                    <input type="text"
+                           name="telephone_${roomId}[]"
+                           class="form-control"
+                           placeholder="Telephone Number">
+                </div>
+                `
+                : ''
+            }
+
+        </div>
+        `;
+
+        roomBlock.querySelector('.device-container')
+                 .insertAdjacentHTML('beforeend', html);
+    }
+
+});
+
+</script>
+
+{% endblock %}

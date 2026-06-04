@@ -652,3 +652,81 @@ def facility_system_summary_view(request):
     }
 
     return render(request, 'entry/facility_system_summary.html', context)
+
+
+
+from django.db.models import Count
+from .models import SystemEquipmentQuantity
+from django.shortcuts import render
+
+def document_list(request):
+    queryset = SystemEquipmentQuantity.objects.select_related(
+        'system', 'facility'
+    ).all()
+
+    # existing table data
+    documents = []
+    for item in queryset:
+        documents.append({
+            'facility': item.facility,
+            'system': item.system,
+            'doc_ref': item.doc_reference_code,
+            'doc_ver': item.doc_version,
+        })
+
+    # ✅ unique count (extra feature)
+    unique_count = (
+        SystemEquipmentQuantity.objects
+        .values('doc_reference_code', 'doc_version')
+        .distinct()
+        .count()
+    )
+
+    return render(request, 'entry/document_list.html', {
+        'documents': documents,
+        'unique_count': unique_count
+    })
+
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import ABDEntry
+from .forms import ABDEntryForm
+
+
+def abd_entry_view(request):
+    edit_id = request.GET.get('edit')
+    delete_id = request.GET.get('delete')
+
+    # 🔴 DELETE
+    if delete_id:
+        entry = get_object_or_404(ABDEntry, id=delete_id)
+        entry.delete()
+        return redirect('abd_entry')
+
+    # ✏️ EDIT
+    if edit_id:
+        entry = get_object_or_404(ABDEntry, id=edit_id)
+        form = ABDEntryForm(instance=entry)
+    else:
+        entry = None
+        form = ABDEntryForm()
+
+    # 💾 SAVE (ADD or UPDATE)
+    if request.method == 'POST':
+        if entry:
+            form = ABDEntryForm(request.POST, instance=entry)
+        else:
+            form = ABDEntryForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect('abd_entry')
+
+    entries = ABDEntry.objects.all().order_by('-created_at')
+
+    return render(request, 'entry/abd_entry.html', {
+        'form': form,
+        'entries': entries,
+        'edit_id': edit_id
+    })

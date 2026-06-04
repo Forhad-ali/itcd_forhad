@@ -1,0 +1,367 @@
+{% extends 'baseroom.html' %}
+
+{% block content %}
+
+<h3 class="mb-3">
+    Facility : {{ facility.facility }}
+</h3>
+
+<form method="post">
+
+    {% csrf_token %}
+
+    <input type="hidden"
+           id="block_count"
+           name="block_count"
+           value="1">
+
+    <div id="systems-container">
+
+        <!-- FIRST SYSTEM -->
+
+        <div class="card mb-4 system-block"
+             data-block="0">
+
+            <div class="card-header bg-dark text-white">
+
+                <div class="row">
+
+                    <div class="col-md-5">
+
+                        <label>System</label>
+
+                        <select
+                            name="system_0"
+                            class="form-select"
+                            required>
+
+                            <option value="">
+                                Select System
+                            </option>
+
+                            {% for system in systems %}
+                            <option value="{{ system.sid }}">
+                                {{ system.system_code }}
+                                -
+                                {{ system.system_title }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-5">
+
+                        <label>MS ID</label>
+
+                        <input type="text"
+                               name="ms_id_0"
+                               class="form-control">
+
+                    </div>
+
+                    <div class="col-md-2">
+
+                        <label>&nbsp;</label>
+
+                        <button type="button"
+                                class="btn btn-danger w-100 remove-system">
+                            Remove
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card-body">
+
+                {% for room in rooms %}
+
+                <div class="border p-3 mb-3">
+
+                    <h6>
+                        Room :
+                        {{ room.room_kks }}
+                    </h6>
+
+                    <div id="room-0-{{ room.rmid }}">
+
+                        <div class="row mb-2 device-row">
+
+                            <div class="col-md-5">
+
+                                <input
+                                    type="text"
+                                    name="device_kks_0_{{ room.rmid }}"
+                                    class="form-control"
+                                    placeholder="Device KKS">
+
+                            </div>
+
+                            <div class="col-md-5">
+
+                                <input
+                                    type="text"
+                                    name="device_title_0_{{ room.rmid }}"
+                                    class="form-control"
+                                    placeholder="Device Title">
+
+                            </div>
+
+                            <div class="col-md-2">
+
+                                <button
+                                    type="button"
+                                    class="btn btn-success add-device"
+                                    data-block="0"
+                                    data-room="{{ room.rmid }}">
+                                    +
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <button type="button"
+            id="add-system"
+            class="btn btn-success mb-3">
+        + Add Another System
+    </button>
+
+    <br>
+
+    <button type="submit"
+            class="btn btn-primary">
+        Save All
+    </button>
+
+</form>
+
+<script>
+
+let blockIndex = 1;
+
+document.getElementById(
+    "add-system"
+).addEventListener(
+    "click",
+    function(){
+
+        let container =
+            document.getElementById(
+                "systems-container"
+            );
+
+        let first =
+            document.querySelector(
+                ".system-block"
+            );
+
+        let clone =
+            first.cloneNode(true);
+
+        clone.setAttribute(
+            "data-block",
+            blockIndex
+        );
+
+        clone.querySelectorAll(
+            "input"
+        ).forEach(
+            i => i.value = ""
+        );
+
+        clone.querySelector(
+            "select"
+        ).name =
+            "system_" + blockIndex;
+
+        clone.querySelector(
+            'input[name^="ms_id"]'
+        ).name =
+            "ms_id_" + blockIndex;
+
+        clone.querySelectorAll(
+            ".add-device"
+        ).forEach(btn => {
+
+            btn.dataset.block =
+                blockIndex;
+
+        });
+
+        clone.querySelectorAll(
+            '[id^="room-"]'
+        ).forEach(div => {
+
+            let room =
+                div.id.split("-")[2];
+
+            div.id =
+                "room-" +
+                blockIndex +
+                "-" +
+                room;
+
+        });
+
+        clone.querySelectorAll(
+            'input[name^="device_kks"]'
+        ).forEach(input => {
+
+            let room =
+                input.name.split("_")[3];
+
+            input.name =
+                "device_kks_" +
+                blockIndex +
+                "_" +
+                room;
+
+        });
+
+        clone.querySelectorAll(
+            'input[name^="device_title"]'
+        ).forEach(input => {
+
+            let room =
+                input.name.split("_")[3];
+
+            input.name =
+                "device_title_" +
+                blockIndex +
+                "_" +
+                room;
+
+        });
+
+        container.appendChild(
+            clone
+        );
+
+        document.getElementById(
+            "block_count"
+        ).value = blockIndex + 1;
+
+        blockIndex++;
+
+    }
+);
+
+document.addEventListener(
+    "click",
+    function(e){
+
+        if(
+            e.target.classList.contains(
+                "add-device"
+            )
+        ){
+
+            let block =
+                e.target.dataset.block;
+
+            let room =
+                e.target.dataset.room;
+
+            let container =
+                document.getElementById(
+                    "room-" +
+                    block +
+                    "-" +
+                    room
+                );
+
+            let row =
+                document.createElement(
+                    "div"
+                );
+
+            row.className =
+                "row mb-2 device-row";
+
+            row.innerHTML = `
+                <div class="col-md-5">
+                    <input
+                        type="text"
+                        name="device_kks_${block}_${room}"
+                        class="form-control"
+                        placeholder="Device KKS">
+                </div>
+
+                <div class="col-md-5">
+                    <input
+                        type="text"
+                        name="device_title_${block}_${room}"
+                        class="form-control"
+                        placeholder="Device Title">
+                </div>
+
+                <div class="col-md-2">
+                    <button
+                        type="button"
+                        class="btn btn-danger remove-device">
+                        -
+                    </button>
+                </div>
+            `;
+
+            container.appendChild(
+                row
+            );
+
+        }
+
+        if(
+            e.target.classList.contains(
+                "remove-device"
+            )
+        ){
+
+            e.target
+             .closest(".device-row")
+             .remove();
+
+        }
+
+        if(
+            e.target.classList.contains(
+                "remove-system"
+            )
+        ){
+
+            if(
+                document.querySelectorAll(
+                    ".system-block"
+                ).length > 1
+            ){
+
+                e.target
+                 .closest(".system-block")
+                 .remove();
+
+            }
+
+        }
+
+    }
+);
+
+</script>
+
+{% endblock %}

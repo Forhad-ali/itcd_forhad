@@ -1,0 +1,29 @@
+{% extends "baseroom.html" %}
+
+{% block content %}
+
+<div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+        Add System
+    </div>
+
+    <div class="card-body">
+
+        <form method="post">
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button type="submit" class="btn btn-success">
+                Save
+            </button>
+
+            <a href="{% url 'system_list' %}" class="btn btn-secondary">
+                Back
+            </a>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

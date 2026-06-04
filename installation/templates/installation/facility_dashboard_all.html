@@ -1,0 +1,204 @@
+{% extends "installation/base_nav.html" %}
+
+{% block title %}FacilityWiseSystem Dashboard All{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-wrapper{
+        padding:20px;
+    }
+
+    .facility-card{
+        background:white;
+        border-radius:18px;
+        padding:12px;
+        box-shadow:0 2px 10px rgba(0,0,0,0.08);
+        height:100%;
+    }
+
+    .facility-title{
+        font-size:18px;
+        font-weight:700;
+        margin-bottom:12px;
+        color:rgb(10, 3, 12);
+        background:#dfe7ea;
+        border-radius:10px;
+        padding:10px;
+        text-align:center;
+    }
+
+    .col-5-custom{
+        width:20%;
+        flex:0 0 auto;
+        padding:4px;
+    }
+
+    .system-card{
+        border-radius:10px;
+        padding:6px;
+        min-height:55px;
+        width:100%;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        text-align:center;
+        transition:0.3s;
+        font-size:10px;
+        font-weight:600;
+        line-height:1.2;
+        word-break:break-word;
+        border:1px solid #ddd;
+    }
+
+    .system-card:hover{
+        transform:translateY(-2px);
+    }
+
+    .status-f2-pending{
+        background:white;
+        color:black;
+    }
+
+    .status-f2-complete{
+        background:#cc95dd;
+        color:white;
+    }
+
+    .status-p4-complete{
+        background:#ffc107;
+        color:black;
+    }
+
+    .status-p8-complete{
+        background:#6f42c1;
+        color:white;
+    }
+
+    .status-p9-complete{
+        background:#198754;
+        color:white;
+    }
+
+    .legend-box{
+        width:18px;
+        height:18px;
+        border-radius:4px;
+        display:inline-block;
+        margin-right:6px;
+        border:1px solid #ccc;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid dashboard-wrapper">
+
+    <!-- LEGEND + SEARCH -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body d-flex flex-wrap align-items-center gap-4">
+
+            <div class="d-flex flex-wrap align-items-center gap-4 flex-grow-1">
+
+                <div class="d-flex align-items-center">
+                    <span class="legend-box" style="background:white;"></span>
+                    Not Complete
+                </div>
+
+                <div class="d-flex align-items-center">
+                    <span class="legend-box" style="background:#cc95dd;"></span>
+                    F2 Complete
+                </div>
+
+                <div class="d-flex align-items-center">
+                    <span class="legend-box" style="background:#ffc107;"></span>
+                    P4 Complete
+                </div>
+
+                <div class="d-flex align-items-center">
+                    <span class="legend-box" style="background:#6f42c1;"></span>
+                    P8 Complete
+                </div>
+
+                <div class="d-flex align-items-center">
+                    <span class="legend-box" style="background:#198754;"></span>
+                    P9 Complete
+                </div>
+
+            </div>
+
+            <div style="width:260px;">
+                <input type="text"
+                       id="facilitySearchInput"
+                       class="form-control"
+                       placeholder="Search facility...">
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row g-3">
+
+        {% for facility, systems in facility_data.items %}
+
+        <!-- FACILITY -->
+        <div class="col-xl-3 col-lg-4 col-md-6 facility-item"
+             data-facility="{{ facility|lower }}">
+
+            <div class="facility-card">
+
+                <div class="facility-title">
+                    {{ facility }}
+                </div>
+
+                <div class="row g-1">
+
+                    {% for s in systems %}
+
+                    <div class="col-5-custom">
+
+                        <div class="system-card
+                            {% if s.p9_completed %}
+                                status-p9-complete
+                            {% elif s.p8_completed %}
+                                status-p8-complete
+                            {% elif s.p4_completed %}
+                                status-p4-complete
+                            {% elif s.completed %}
+                                status-f2-complete
+                            {% else %}
+                                status-f2-pending
+                            {% endif %}
+                        ">
+                            {{ s.system }}
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById("facilitySearchInput").addEventListener("keyup", function () {
+    const value = this.value.toLowerCase();
+
+    document.querySelectorAll(".facility-item").forEach(item => {
+        item.style.display = item.dataset.facility.includes(value) ? "" : "none";
+    });
+});
+</script>
+{% endblock %}

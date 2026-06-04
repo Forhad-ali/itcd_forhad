@@ -1,0 +1,140 @@
+{% extends "installation/base_nav.html" %}
+
+{% block title %}F2 TB Submit Save{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4 px-4">
+
+    <div class="top-card mb-2">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+            <h4 class="mb-0">F2 TB System</h4>
+
+            <form method="GET" class="d-flex gap-2 flex-wrap">
+
+                <input type="text"
+                       name="ms_id_full"
+                       value="{{ ms_id_full }}"
+                       class="form-control"
+                       placeholder="Enter MS ID Full"
+                       style="width: 450px; max-width: 100%;">
+
+                <button class="btn btn-primary">
+                    Search
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+    {% if message %}
+        <div class="alert alert-info">{{ message }}</div>
+    {% endif %}
+
+    <div id="toast" class="alert d-none"></div>
+
+    {% for e in entries %}
+
+    <div class="card mb-3 p-3 shadow-sm border-0">
+
+        <div class="row g-2">
+
+            <div class="col-md-4">
+                <label>MS ID Full</label>
+                <input class="form-control" value="{{ e.ms_id_full }}" disabled>
+            </div>
+
+            <div class="col-md-2">
+                <label>Status</label>
+                <select class="form-select status-{{ e.id }}">
+                    <option value="Completed" {% if e.status == 'Completed' %}selected{% endif %}>Completed</option>
+                    <option value="Ongoing" {% if e.status == 'Ongoing' %}selected{% endif %}>Ongoing</option>
+                    <option value="Not Started Yet" {% if e.status == 'Not Started Yet' %}selected{% endif %}>Not Started Yet</option>
+                </select>
+            </div>
+
+            <div class="col-md-1">
+                <label>ABD</label>
+                <input type="text"
+                       class="form-control abd-{{ e.id }}"
+                       value="{{ e.abd_number }}">
+            </div>
+
+            <div class="col-md-2">
+                <label>Start</label>
+                <input type="date"
+                       class="form-control start-{{ e.id }}"
+                       value="{% if e.start_date %}{{ e.start_date|date:'Y-m-d' }}{% endif %}">
+            </div>
+
+            <div class="col-md-2">
+                <label>End</label>
+                <input type="date"
+                       class="form-control end-{{ e.id }}"
+                       value="{% if e.end_date %}{{ e.end_date|date:'Y-m-d' }}{% endif %}">
+            </div>
+
+            <div class="col-md-1 d-flex align-items-end">
+                <button type="button"
+                        class="btn btn-success w-100"
+                        onclick="submitRow({{ e.id }})">
+                    Submit
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    {% empty %}
+
+    <div class="text-center text-muted py-4">
+        No records found
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function submitRow(id) {
+    const data = {
+        field: "bulk",
+        value: "bulk",
+        status: document.querySelector(".status-" + id).value,
+        abd_number: document.querySelector(".abd-" + id).value,
+        start_date: document.querySelector(".start-" + id).value,
+        end_date: document.querySelector(".end-" + id).value
+    };
+
+    fetch(`/installation/f2-tb/save/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken
+        },
+        body: JSON.stringify({
+            id: id,
+            ...data
+        })
+    })
+    .then(res => res.json())
+    .then(res => {
+        const toast = document.getElementById("toast");
+
+        toast.classList.remove("d-none", "alert-success", "alert-danger");
+        toast.classList.add(res.success ? "alert-success" : "alert-danger");
+        toast.innerText = res.message;
+
+        setTimeout(() => {
+            toast.classList.add("d-none");
+        }, 2000);
+    });
+}
+</script>
+{% endblock %}

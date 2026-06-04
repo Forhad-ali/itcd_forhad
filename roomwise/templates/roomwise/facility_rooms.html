@@ -1,0 +1,68 @@
+{% extends 'baseroom.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between mb-3">
+
+    <h3>
+        Rooms of {{ facility.facility }}
+    </h3>
+
+    <a href="{% url 'room_add' facility.fid %}"
+       class="btn btn-success">
+        Add Room
+    </a>
+
+</div>
+
+<table class="table table-bordered table-hover">
+
+    <tr>
+        <th width="80">SL</th>
+        <th>Room KKS</th>
+        <th>Room Title</th>
+        <th width="180">Action</th>
+    </tr>
+
+    {% for room in rooms %}
+
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ room.room_kks }}</td>
+        <td>{{ room.room_title }}</td>
+
+        <td>
+
+            <a href="{% url 'room_edit' room.rmid %}"
+               class="btn btn-warning btn-sm">
+                Edit
+            </a>
+
+            <a href="{% url 'room_delete' room.rmid %}"
+               class="btn btn-danger btn-sm"
+               onclick="return confirm('Delete this room?')">
+                Delete
+            </a>
+
+        </td>
+
+    </tr>
+
+    {% empty %}
+
+    <tr>
+        <td colspan="4" class="text-center">
+            No Rooms Found
+        </td>
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+<a href="{% url 'facility_list' %}"
+   class="btn btn-secondary">
+    Back
+</a>
+
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends 'baseroom.html' %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Systems</h3>
+
+    <a class="btn btn-primary" href="{% url 'system_add' %}">
+        Add System
+    </a>
+</div>
+
+<div class="row g-3">
+
+    {% for i in data %}
+
+    <div class="col-6 col-md-4 col-lg-2-4">
+        <a href="{% url 'equipment_add' i.sid %}" class="text-decoration-none">
+
+            <div class="system-card" title="{{ i.system_title }}">
+                <div class="system-code">
+                    {{ i.system_code }}
+                </div>
+
+                <div class="system-title">
+                    {{ i.system_title }}
+                </div>
+            </div>
+
+        </a>
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<style>
+    .col-lg-2-4 {
+        flex: 0 0 20%;
+        max-width: 20%;
+    }
+
+    @media (max-width: 991px) {
+        .col-lg-2-4 {
+            flex: 0 0 33.333%;
+            max-width: 33.333%;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .col-lg-2-4 {
+            flex: 0 0 50%;
+            max-width: 50%;
+        }
+    }
+
+    .system-card {
+        height: 110px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transition: 0.25s;
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+    }
+
+    .system-card:hover {
+        transform: translateY(-3px);
+        border-color: #0d6efd;
+    }
+
+    .system-code {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0d6efd;
+    }
+
+    .system-title {
+        position: absolute;
+        inset: 0;
+        background: rgba(13, 110, 253, 0.94);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        opacity: 0;
+        transition: 0.25s;
+    }
+
+    .system-card:hover .system-title {
+        opacity: 1;
+    }
+</style>
+
+{% endblock %}

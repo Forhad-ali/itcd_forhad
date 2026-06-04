@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ABD Entry</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body style="background-color:#f8f9fa;">
+
+<div class="container py-4">
+
+    <h3 class="mb-4 text-primary">📋 ABD Entry Management</h3>
+
+    <!-- ✅ YES BUTTON -->
+    <button class="btn btn-success mb-3" onclick="toggleForm()">
+        ✅ Yes (Add / Edit Entry)
+    </button>
+
+    <!-- FORM SECTION -->
+    <div id="formSection" {% if not edit_id %}style="display:none;"{% endif %}>
+        <div class="card shadow-sm p-4 mb-4">
+
+            <!-- FORM TITLE -->
+            <h5 class="mb-3">
+                {% if edit_id %}
+                    ✏️ Edit Entry
+                {% else %}
+                    ➕ Add Entry
+                {% endif %}
+            </h5>
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="row g-2 align-items-end">
+
+                    <!-- MS ID -->
+                    <div class="col-md-2">
+                        <label class="form-label mb-1">MS ID</label>
+                        {{ form.ms_id }}
+                    </div>
+                    <div class="col-md-1">
+                        <label class="form-label mb-1"> </label>
+                      
+                    </div>
+
+                    <!-- STATUS -->
+                    <div class="col-md-1">
+                        <label class="form-label mb-1">Status</label>
+                        {{ form.status }}
+                    </div>
+
+                    <!-- ABD NUMBER -->
+                    <div class="col-md-3">
+                        <label class="form-label mb-1">ABD Number</label>
+                        {{ form.abd_number }}
+                    </div>
+
+                    <!-- START DATE -->
+                    <div class="col-md-2">
+                        <label class="form-label mb-1">Start</label>
+                        {{ form.start_date }}
+                    </div>
+
+                    <!-- END DATE -->
+                    <div class="col-md-2">
+                        <label class="form-label mb-1">End</label>
+                        {{ form.end_date }}
+                    </div>
+
+                    <!-- SUBMIT -->
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            {% if edit_id %}Update{% else %}Submit{% endif %}
+                        </button>
+                    </div>
+
+                </div>
+            </form>       
+         </div>
+    </div>
+
+    <!-- 📄 TABLE -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+            📄 Submitted Entries
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-striped align-middle">
+
+                    <thead class="table-light">
+                        <tr>
+                            <th>MS ID</th>
+                            <th>Completion Status</th>
+                            <th>ABD Number</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>                     
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for e in entries %}
+                        <tr>
+                            <td>{{ e.ms_id }}</td>
+
+                            <td>
+                                {% if e.status == "YES" %}
+                                    <span class="badge bg-success">Yes</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">No</span>
+                                {% endif %}
+                            </td>
+
+                            <td>{{ e.abd_number }}</td>
+                            <td>{{ e.start_date }}</td>
+                            <td>{{ e.end_date }}</td>
+                        
+
+                            <!-- ACTION BUTTONS -->
+                            <td>
+                                <a href="?edit={{ e.id }}" class="btn btn-sm btn-warning">
+                                    ✏️
+                                </a>
+
+                                <a href="?delete={{ e.id }}"
+                                   class="btn btn-sm btn-danger"
+                                   onclick="return confirm('Delete this entry?')">
+                                   🗑
+                                </a>
+                            </td>
+                        </tr>
+
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">
+                                No entries found
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- JS -->
+<script>
+function toggleForm() {
+    let form = document.getElementById("formSection");
+
+    if (form.style.display === "none") {
+        form.style.display = "block";
+    } else {
+        form.style.display = "none";
+    }
+}
+</script>
+
+</body>
+</html>
