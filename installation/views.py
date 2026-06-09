@@ -500,9 +500,9 @@ from django.http import JsonResponse
 from .forms import P4IDForm
 from .models import P4ID, Installation
 
+# ================= CREATE =================
 @login_required
 @role_required(['admin', 'manager', 'staff', 'viewer'])
-# ================= CREATE =================
 def p4_create(request):
 
     if request.method == 'POST':
@@ -513,22 +513,16 @@ def p4_create(request):
 
             p4 = form.save()
 
-            # get selected ms ids
-            ms_ids = request.POST.get('ms_ids', '')
+            ms_id = request.POST.get('ms_ids', '').strip()
 
-            ms_ids_list = [
-                x.strip()
-                for x in ms_ids.split(',')
-                if x.strip()
-            ]
+            installation = Installation.objects.filter(
+                ms_id=ms_id
+            ).first()
 
-            # get installation objects
-            installations = Installation.objects.filter(
-                ms_id__in=ms_ids_list
-            )
-
-            # save many-to-many
-            p4.ms_ids.set(installations)
+            if installation:
+                p4.ms_ids.set([installation])
+            else:
+                p4.ms_ids.clear()
 
             return redirect('p4_display_list')
 
@@ -538,10 +532,10 @@ def p4_create(request):
     return render(request,
                   'installation/p4_entry.html',
                   {
-                      'form': form
+                      'form': form,
+                      'selected_ms_id': '',
+                      'selected_ms_label': '',
                   })
-
-
 # ================= DISPLAY =================
 @login_required
 @role_required(['admin', 'manager', 'staff', 'viewer'])
@@ -572,7 +566,8 @@ def search_ms(request):
     data = [
         {
             "id": item.id,
-            "ms_id": item.ms_id
+            "ms_id": item.ms_id,
+            "system": item.system
         }
         for item in results
     ]
@@ -581,6 +576,8 @@ def search_ms(request):
 
 
 
+# ================= EDIT =================
+# ================= EDIT =================
 # ================= EDIT =================
 @login_required
 @role_required(['admin', 'manager', 'staff', 'viewer'])
@@ -594,22 +591,43 @@ def p4_edit(request, id):
 
         if form.is_valid():
 
-            form.save()
+            p4 = form.save()
+
+            ms_id = request.POST.get('ms_ids', '').strip()
+
+            installation = Installation.objects.filter(
+                ms_id=ms_id
+            ).first()
+
+            if installation:
+                p4.ms_ids.set([installation])
+            else:
+                p4.ms_ids.clear()
 
             return redirect('p4_display_list')
 
     else:
-
         form = P4IDForm(instance=p4)
+
+    selected_installation = p4.ms_ids.first()
+
+    selected_ms_id = ''
+    selected_ms_label = ''
+
+    if selected_installation:
+        selected_ms_id = selected_installation.ms_id
+        selected_ms_label = (
+            f'{selected_installation.ms_id} || '
+            f'{selected_installation.system}'
+        )
 
     return render(request,
                   'installation/p4_entry.html',
                   {
-                      'form': form
-                  })
-
-
-# ================= DELETE =================
+                      'form': form,
+                      'selected_ms_id': selected_ms_id,
+                      'selected_ms_label': selected_ms_label,
+                  })# ================= DELETE =================
 @login_required
 @role_required(['admin'])
 def p4_delete(request, id):

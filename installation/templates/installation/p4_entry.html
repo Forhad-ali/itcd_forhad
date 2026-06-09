@@ -35,12 +35,14 @@
                 Back
             </a>
         </div>
-
         <!-- FORM -->
         <form method="POST">
             {% csrf_token %}
 
-            <input type="hidden" name="ms_ids" id="ms_ids_input">
+            <input type="hidden"
+                name="ms_ids"
+                id="ms_ids_input"
+                value="{{ selected_ms_id|default:'' }}">
 
             <!-- FIRST ROW -->
             <div class="row g-3">
@@ -55,16 +57,14 @@
 
                     <div class="ms-wrapper">
                         <input type="text"
-                               class="form-control ms-search"
-                               placeholder="Search MS ID..."
-                               onkeyup="searchMS(this)">
+                            class="form-control ms-search"
+                            placeholder="Search MS ID..."
+                            value="{{ selected_ms_label|default:'' }}"
+                            onkeyup="searchMS(this)">
 
                         <div class="ms-results"></div>
                     </div>
-
-                    <div class="selected-ms mt-2"></div>
                 </div>
-
                 <div class="col-md-3">
                     <label for="{{ form.saw_programs.id_for_label }}">SAW Program</label>
                     {{ form.saw_programs }}
@@ -72,7 +72,20 @@
 
                 <div class="col-md-3">
                     <label for="{{ form.associate_ms.id_for_label }}">Associate MS</label>
-                    {{ form.associate_ms }}
+
+                    <div class="ms-wrapper">
+                        <input type="text"
+                            name="{{ form.associate_ms.name }}"
+                            id="{{ form.associate_ms.id_for_label }}"
+                            value="{{ form.associate_ms.value|default_if_none:'' }}"
+                            class="form-control associate-search"
+                            placeholder="Search Associate MS..."
+                            onkeyup="searchAssociateMS(this)">
+
+                        <div class="ms-results"></div>
+                    </div>
+
+                    {{ form.associate_ms.errors }}
                 </div>
 
             </div>
@@ -116,10 +129,10 @@
 
 {% block extra_js %}
 <script>
-let selectedMS = [];
+let selectedMS = document.getElementById("ms_ids_input").value || "";
 
 function syncInput() {
-    document.getElementById("ms_ids_input").value = selectedMS.join(",");
+    document.getElementById("ms_ids_input").value = selectedMS;
 }
 
 function searchMS(input) {
@@ -143,13 +156,15 @@ function searchMS(input) {
             }
 
             data.forEach(item => {
-                if (selectedMS.includes(item.ms_id)) return;
-
                 const div = document.createElement("div");
-                div.innerText = item.ms_id;
+                div.innerText = `${item.ms_id} || ${item.system || ""}`;
 
                 div.onclick = function () {
-                    addMS(item.ms_id, input);
+                    selectedMS = item.ms_id;
+                    syncInput();
+
+                    input.value = `${item.ms_id} || ${item.system || ""}`;
+                    resultBox.innerHTML = "";
                 };
 
                 resultBox.appendChild(div);
@@ -180,6 +195,52 @@ function addMS(ms_id, input) {
 
     input.value = "";
     input.closest(".ms-wrapper").querySelector(".ms-results").innerHTML = "";
+}
+function searchAssociateMS(input) {
+    const query = input.value.trim().split(/\s+/).pop();
+    const wrapper = input.closest(".ms-wrapper");
+    const resultBox = wrapper.querySelector(".ms-results");
+
+    if (query.length < 2) {
+        resultBox.innerHTML = "";
+        return;
+    }
+
+    fetch(`/installation/search-ms/?q=${encodeURIComponent(query)}`)
+        .then(res => res.json())
+        .then(data => {
+            resultBox.innerHTML = "";
+
+            if (data.length === 0) {
+                resultBox.innerHTML = `<div class="p-2 text-muted">No result found</div>`;
+                return;
+            }
+
+            data.forEach(item => {
+                const div = document.createElement("div");
+                div.innerText = item.ms_id;
+
+                div.onclick = function () {
+                    addAssociateMS(input, item.ms_id);
+                    resultBox.innerHTML = "";
+                };
+
+                resultBox.appendChild(div);
+            });
+        });
+}
+
+function addAssociateMS(input, ms_id) {
+    let values = input.value.trim().split(/\s+/).filter(Boolean);
+
+    values.pop();
+
+    if (!values.includes(ms_id)) {
+        values.push(ms_id);
+    }
+
+    input.value = values.join(" ") + " ";
+    input.focus();
 }
 </script>
 {% endblock %}
