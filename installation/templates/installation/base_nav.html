@@ -82,6 +82,12 @@
                                 P9 Dashboard
                             </a>
                         </li>
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'facility_dashboard' %}active{% endif %}"
+                               href="{% url 'p9_facility_dashboard' %}">
+                                P9 Systems
+                            </a>
+                        </li> 
                     </ul>
                 </li>
 
@@ -114,6 +120,12 @@
                                 P8 Dashboard
                             </a>
                         </li>
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'facility_dashboard' %}active{% endif %}"
+                               href="{% url 'p8_facility_dashboard' %}">
+                                P8 Systems
+                            </a>
+                        </li> 
                     </ul>
                 </li>
 
@@ -145,6 +157,12 @@
                                 P4 Dashboard
                             </a>
                         </li>
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'facility_dashboard' %}active{% endif %}"
+                               href="{% url 'p4_facility_dashboard' %}">
+                                P4 Systems
+                            </a>
+                        </li> 
                     </ul>
                 </li>
 
@@ -168,7 +186,13 @@
                                href="{% url 'dashboard' %}">
                                 F2 Dashboard
                             </a>
-                        </li>                        
+                        </li>   
+                        <li>
+                            <a class="dropdown-item {% if request.resolver_match.url_name == 'facility_dashboard' %}active{% endif %}"
+                               href="{% url 'facility_dashboard' %}">
+                                F2 Systems
+                            </a>
+                        </li>                     
                     </ul>
                 </li>
 

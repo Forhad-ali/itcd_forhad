@@ -1,0 +1,158 @@
+{% extends "installation/base_nav.html" %}
+
+{% block title %}P4 Facility Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-wrapper {
+        padding: 20px;
+        background: #f4f6f9;
+        min-height: calc(100vh - 70px);
+    }
+
+    .dashboard-top {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 12px 14px;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+    }
+
+    .dashboard-top h4 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #172033;
+    }
+
+    .facility-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 12px;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+        height: 100%;
+    }
+
+    .facility-title {
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #ffffff;
+        background: #0d3b66;
+        border-radius: 6px;
+        padding: 8px;
+        text-align: center;
+    }
+
+    .col-5-custom {
+        width: 20%;
+        flex: 0 0 auto;
+        padding: 4px;
+    }
+
+    .system-card {
+        border-radius: 6px;
+        padding: 6px;
+        color: #ffffff;
+        min-height: 58px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        transition: 0.2s;
+        font-size: 10px;
+        font-weight: 600;
+        line-height: 1.2;
+        word-break: break-word;
+        text-decoration: none;
+    }
+
+    .system-card:hover {
+        transform: translateY(-2px);
+        color: #ffffff;
+    }
+
+    .system-name {
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .p4-id {
+        font-size: 9px;
+        opacity: 0.9;
+        margin-top: 3px;
+    }
+
+    .ms-id {
+        font-size: 9px;
+        opacity: 0.85;
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-wrapper {
+            padding: 10px;
+        }
+
+        .col-5-custom {
+            width: 33.333%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid dashboard-wrapper">
+
+    <div class="dashboard-top d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <h4 class="mb-0">P4 Facility Wise System Dashboard</h4>
+    </div>
+
+    <div class="row g-3">
+
+        {% for facility, systems in facility_data.items %}
+
+        <div class="col-xl-3 col-lg-4 col-md-6">
+
+            <div class="facility-card">
+
+                <div class="facility-title">
+                    {{ facility }}
+                </div>
+
+                <div class="row g-1">
+
+                    {% for s in systems %}
+
+                    <div class="col-5-custom">
+                        <a href="{% url 'p4_edit' s.p4_db_id %}"
+                           class="system-card bg-{{ s.color }}">
+                            <div class="system-name">{{ s.system }}</div>
+                        </a>
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="col-12">
+            <div class="text-center text-muted py-4">
+                No P4 data found
+            </div>
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

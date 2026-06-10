@@ -467,17 +467,21 @@ from .models import Installation
 @role_required(['admin', 'manager', 'staff', 'viewer'])
 def facility_dashboard(request):
 
+    selected_type = request.GET.get("type", "").strip()
+
     data = Installation.objects.all().order_by('facility', 'system')
+
+    if selected_type:
+        data = data.filter(type=selected_type)
 
     facility_data = defaultdict(list)
 
     for item in data:
 
-        # color logic
         if item.status.lower() == "completed":
-            color = "success"   # green
+            color = "success"
         else:
-            color = "primary"   # blue
+            color = "primary"
 
         facility_data[item.facility].append({
             'system': item.system,
@@ -488,11 +492,11 @@ def facility_dashboard(request):
         })
 
     context = {
-        'facility_data': dict(facility_data)
+        'facility_data': dict(facility_data),
+        'selected_type': selected_type,
     }
 
     return render(request, 'installation/facility_dashboard.html', context)
-
 
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
@@ -953,7 +957,9 @@ def facility_dashboard_all(request):
     facility_data = {}
 
     # ================= INSTALLATIONS =================
-    installations = Installation.objects.all().order_by(
+    installations = Installation.objects.filter(
+        type='TB'
+    ).order_by(
         'facility',
         'system'
     )
@@ -1294,4 +1300,115 @@ def p9_dashboard_filter(request):
     return render(request, "installation/filter_page.html", {
         "title": title,
         "records": records,
+    })
+
+
+
+
+from collections import defaultdict
+from django.shortcuts import render
+
+@login_required
+@role_required(['admin', 'manager', 'staff', 'viewer'])
+def p4_facility_dashboard(request):
+
+    p4_data = P4ID.objects.prefetch_related("ms_ids").all().order_by("p4_id")
+
+    facility_data = defaultdict(list)
+
+    for p4 in p4_data:
+
+        for ms in p4.ms_ids.filter(type__iexact="TB"):
+
+            color = "success" if p4.completed else "primary"
+
+            facility_data[ms.facility].append({
+                "p4_id": p4.p4_id,
+                "system": ms.system,
+                "ms_id": ms.ms_id,
+                "completed": p4.completed,
+                "color": color,
+                "p4_db_id": p4.id,
+            })
+
+    return render(request, "installation/p4_facility_dashboard.html", {
+        "facility_data": dict(facility_data),
+        
+    })
+
+
+from collections import defaultdict
+from django.shortcuts import render
+
+@login_required
+@role_required(['admin', 'manager', 'staff', 'viewer'])
+def p8_facility_dashboard(request):
+
+    p8_data = P8ID.objects.prefetch_related(
+        "p4_ids",
+        "p4_ids__ms_ids"
+    ).all().order_by("p8_id")
+
+    facility_data = defaultdict(list)
+
+    for p8 in p8_data:
+
+        for p4 in p8.p4_ids.all():
+
+            for ms in p4.ms_ids.filter(type__iexact="TB"):
+
+                color = "success" if p8.completed else "primary"
+
+                facility_data[ms.facility].append({
+                    "p8_id": p8.p8_id,
+                    "p4_id": p4.p4_id,
+                    "system": ms.system,
+                    "ms_id": ms.ms_id,
+                    "completed": p8.completed,
+                    "color": color,
+                    "p8_db_id": p8.id,
+                })
+
+    return render(request, "installation/p8_facility_dashboard.html", {
+        "facility_data": dict(facility_data),
+    })
+
+from collections import defaultdict
+from django.shortcuts import render
+
+@login_required
+@role_required(['admin', 'manager', 'staff', 'viewer'])
+def p9_facility_dashboard(request):
+
+    p9_data = P9ID.objects.prefetch_related(
+        "p8_ids",
+        "p8_ids__p4_ids",
+        "p8_ids__p4_ids__ms_ids"
+    ).all().order_by("p9_id")
+
+    facility_data = defaultdict(list)
+
+    for p9 in p9_data:
+
+        for p8 in p9.p8_ids.all():
+
+            for p4 in p8.p4_ids.all():
+
+                for ms in p4.ms_ids.filter(type__iexact="TB"):
+
+                    color = "success" if p9.completed else "primary"
+
+                    facility_data[ms.facility].append({
+                        "p9_id": p9.p9_id,
+                        "p8_id": p8.p8_id,
+                        "p4_id": p4.p4_id,
+                        "system": ms.system,
+                        "ms_id": ms.ms_id,
+                        "completed": p9.completed,
+                        "color": color,
+                        "p9_db_id": p9.id,
+                    })
+
+    return render(request, "installation/p9_facility_dashboard.html", {
+        "facility_data": dict(facility_data),
     })
