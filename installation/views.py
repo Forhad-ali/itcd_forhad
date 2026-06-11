@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from common.decorators import role_required
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.contrib import messages
 
 # =========================
 # INSTALLATION LIST (PAGINATION)
@@ -505,6 +506,7 @@ from .forms import P4IDForm
 from .models import P4ID, Installation
 
 # ================= CREATE =================
+# ================= CREATE =================
 @login_required
 @role_required(['admin', 'manager', 'staff', 'viewer'])
 def p4_create(request):
@@ -515,32 +517,63 @@ def p4_create(request):
 
         if form.is_valid():
 
-            p4 = form.save()
+            p4_id = form.cleaned_data.get("p4_id")
 
-            ms_id = request.POST.get('ms_ids', '').strip()
+            duplicate_exists = P4ID.objects.filter(
+                p4_id__iexact=p4_id
+            ).exists()
 
-            installation = Installation.objects.filter(
-                ms_id=ms_id
-            ).first()
+            if duplicate_exists:
 
-            if installation:
-                p4.ms_ids.set([installation])
+                messages.error(
+                    request,
+                    "This P4 ID already exists."
+                )
+
+                form.add_error(
+                    "p4_id",
+                    "This P4 ID already exists."
+                )
+
             else:
-                p4.ms_ids.clear()
 
-            return redirect('p4_display_list')
+                p4 = form.save()
+
+                installation_id = request.POST.get(
+                    'ms_ids',
+                    ''
+                ).strip()
+
+                installation = Installation.objects.filter(
+                    id=installation_id
+                ).first()
+
+                if installation:
+                    p4.ms_ids.set([installation])
+                else:
+                    p4.ms_ids.clear()
+
+                messages.success(
+                    request,
+                    "P4 created successfully."
+                )
+
+                return redirect('p4_display_list')
 
     else:
+
         form = P4IDForm()
 
-    return render(request,
-                  'installation/p4_entry.html',
-                  {
-                      'form': form,
-                      'selected_ms_id': '',
-                      'selected_ms_label': '',
-                  })
-# ================= DISPLAY =================
+    return render(
+        request,
+        'installation/p4_entry.html',
+        {
+            'form': form,
+            'selected_ms_id': '',
+            'selected_ms_label': '',
+        }
+    )
+    # ================= DISPLAY =================
 @login_required
 @role_required(['admin', 'manager', 'staff', 'viewer'])
 def p4_list(request):
@@ -581,6 +614,8 @@ def search_ms(request):
 
 
 # ================= EDIT =================
+# ================= EDIT ================
+
 # ================= EDIT =================
 # ================= EDIT =================
 @login_required
@@ -595,22 +630,53 @@ def p4_edit(request, id):
 
         if form.is_valid():
 
-            p4 = form.save()
+            p4_id = form.cleaned_data.get("p4_id")
 
-            ms_id = request.POST.get('ms_ids', '').strip()
+            duplicate_exists = P4ID.objects.filter(
+                p4_id__iexact=p4_id
+            ).exclude(
+                id=p4.id
+            ).exists()
 
-            installation = Installation.objects.filter(
-                ms_id=ms_id
-            ).first()
+            if duplicate_exists:
 
-            if installation:
-                p4.ms_ids.set([installation])
+                messages.error(
+                    request,
+                    "This P4 ID already exists."
+                )
+
+                form.add_error(
+                    "p4_id",
+                    "This P4 ID already exists."
+                )
+
             else:
-                p4.ms_ids.clear()
 
-            return redirect('p4_display_list')
+                p4 = form.save()
+
+                installation_id = request.POST.get(
+                    'ms_ids',
+                    ''
+                ).strip()
+
+                installation = Installation.objects.filter(
+                    id=installation_id
+                ).first()
+
+                if installation:
+                    p4.ms_ids.set([installation])
+                else:
+                    p4.ms_ids.clear()
+
+                messages.success(
+                    request,
+                    "P4 updated successfully."
+                )
+
+                return redirect('p4_display_list')
 
     else:
+
         form = P4IDForm(instance=p4)
 
     selected_installation = p4.ms_ids.first()
@@ -619,19 +685,24 @@ def p4_edit(request, id):
     selected_ms_label = ''
 
     if selected_installation:
-        selected_ms_id = selected_installation.ms_id
+
+        selected_ms_id = selected_installation.id
+
         selected_ms_label = (
             f'{selected_installation.ms_id} || '
             f'{selected_installation.system}'
         )
 
-    return render(request,
-                  'installation/p4_entry.html',
-                  {
-                      'form': form,
-                      'selected_ms_id': selected_ms_id,
-                      'selected_ms_label': selected_ms_label,
-                  })# ================= DELETE =================
+    return render(
+        request,
+        'installation/p4_entry.html',
+        {
+            'form': form,
+            'selected_ms_id': selected_ms_id,
+            'selected_ms_label': selected_ms_label,
+        }
+    )
+#  ================= DELETE =================
 @login_required
 @role_required(['admin'])
 def p4_delete(request, id):
@@ -651,7 +722,6 @@ from .models import P8ID, P4ID
 
 @login_required
 @role_required(['admin', 'manager', 'staff', 'viewer'])
-# ================= CREATE =================
 def p8_create(request):
 
     if request.method == 'POST':
@@ -660,26 +730,48 @@ def p8_create(request):
 
         if form.is_valid():
 
-            p8 = form.save()
+            p8_id = form.cleaned_data.get("p8_id")
 
-            # selected p4 ids
-            p4_ids = request.POST.get('p4_ids', '')
+            duplicate_exists = P8ID.objects.filter(
+                p8_id__iexact=p8_id
+            ).exists()
 
-            p4_ids_list = [
-                x.strip()
-                for x in p4_ids.split(',')
-                if x.strip()
-            ]
+            if duplicate_exists:
 
-            # get P4 objects
-            p4_objects = P4ID.objects.filter(
-                p4_id__in=p4_ids_list
-            )
+                messages.error(
+                    request,
+                    "This P8 ID already exists."
+                )
 
-            # save many-to-many
-            p8.p4_ids.set(p4_objects)
+                form.add_error(
+                    "p8_id",
+                    "This P8 ID already exists."
+                )
 
-            return redirect('p8_display_list')
+            else:
+
+                p8 = form.save()
+
+                p4_ids = request.POST.get('p4_ids', '')
+
+                p4_ids_list = [
+                    x.strip()
+                    for x in p4_ids.split(',')
+                    if x.strip()
+                ]
+
+                p4_objects = P4ID.objects.filter(
+                    p4_id__in=p4_ids_list
+                )
+
+                p8.p4_ids.set(p4_objects)
+
+                messages.success(
+                    request,
+                    "P8 created successfully."
+                )
+
+                return redirect('p8_display_list')
 
     else:
 
@@ -730,10 +822,8 @@ def search_p4(request):
     ]
 
     return JsonResponse(data, safe=False)
-
 @login_required
 @role_required(['admin', 'manager', 'staff', 'viewer'])
-# ================= EDIT =================
 def p8_edit(request, id):
 
     p8 = get_object_or_404(P8ID, id=id)
@@ -747,24 +837,50 @@ def p8_edit(request, id):
 
         if form.is_valid():
 
-            p8 = form.save()
+            p8_id = form.cleaned_data.get("p8_id")
 
-            # update many-to-many
-            p4_ids = request.POST.get('p4_ids', '')
+            duplicate_exists = P8ID.objects.filter(
+                p8_id__iexact=p8_id
+            ).exclude(
+                id=p8.id
+            ).exists()
 
-            p4_ids_list = [
-                x.strip()
-                for x in p4_ids.split(',')
-                if x.strip()
-            ]
+            if duplicate_exists:
 
-            p4_objects = P4ID.objects.filter(
-                p4_id__in=p4_ids_list
-            )
+                messages.error(
+                    request,
+                    "This P8 ID already exists."
+                )
 
-            p8.p4_ids.set(p4_objects)
+                form.add_error(
+                    "p8_id",
+                    "This P8 ID already exists."
+                )
 
-            return redirect('p8_display_list')
+            else:
+
+                p8 = form.save()
+
+                p4_ids = request.POST.get('p4_ids', '')
+
+                p4_ids_list = [
+                    x.strip()
+                    for x in p4_ids.split(',')
+                    if x.strip()
+                ]
+
+                p4_objects = P4ID.objects.filter(
+                    p4_id__in=p4_ids_list
+                )
+
+                p8.p4_ids.set(p4_objects)
+
+                messages.success(
+                    request,
+                    "P8 updated successfully."
+                )
+
+                return redirect('p8_display_list')
 
     else:
 
@@ -797,10 +913,8 @@ from django.http import JsonResponse
 
 from .forms import P9IDForm
 from .models import P9ID, P8ID
-
 @login_required
 @role_required(['admin', 'manager', 'staff', 'viewer'])
-# ================= CREATE =================
 def p9_create(request):
 
     if request.method == 'POST':
@@ -809,26 +923,48 @@ def p9_create(request):
 
         if form.is_valid():
 
-            p9 = form.save()
+            p9_id = form.cleaned_data.get("p9_id")
 
-            # selected p8 ids
-            p8_ids = request.POST.get('p8_ids', '')
+            duplicate_exists = P9ID.objects.filter(
+                p9_id__iexact=p9_id
+            ).exists()
 
-            p8_ids_list = [
-                x.strip()
-                for x in p8_ids.split(',')
-                if x.strip()
-            ]
+            if duplicate_exists:
 
-            # get P8 objects
-            p8_objects = P8ID.objects.filter(
-                p8_id__in=p8_ids_list
-            )
+                messages.error(
+                    request,
+                    "This P9 ID already exists."
+                )
 
-            # save many-to-many
-            p9.p8_ids.set(p8_objects)
+                form.add_error(
+                    "p9_id",
+                    "This P9 ID already exists."
+                )
 
-            return redirect('p9_display_list')
+            else:
+
+                p9 = form.save()
+
+                p8_ids = request.POST.get('p8_ids', '')
+
+                p8_ids_list = [
+                    x.strip()
+                    for x in p8_ids.split(',')
+                    if x.strip()
+                ]
+
+                p8_objects = P8ID.objects.filter(
+                    p8_id__in=p8_ids_list
+                )
+
+                p9.p8_ids.set(p8_objects)
+
+                messages.success(
+                    request,
+                    "P9 created successfully."
+                )
+
+                return redirect('p9_display_list')
 
     else:
 
@@ -897,24 +1033,50 @@ def p9_edit(request, id):
 
         if form.is_valid():
 
-            p9 = form.save()
+            p9_id = form.cleaned_data.get("p9_id")
 
-            # update many-to-many
-            p8_ids = request.POST.get('p8_ids', '')
+            duplicate_exists = P9ID.objects.filter(
+                p9_id__iexact=p9_id
+            ).exclude(
+                id=p9.id
+            ).exists()
 
-            p8_ids_list = [
-                x.strip()
-                for x in p8_ids.split(',')
-                if x.strip()
-            ]
+            if duplicate_exists:
 
-            p8_objects = P8ID.objects.filter(
-                p8_id__in=p8_ids_list
-            )
+                messages.error(
+                    request,
+                    "This P9 ID already exists."
+                )
 
-            p9.p8_ids.set(p8_objects)
+                form.add_error(
+                    "p9_id",
+                    "This P9 ID already exists."
+                )
 
-            return redirect('p9_display_list')
+            else:
+
+                p9 = form.save()
+
+                p8_ids = request.POST.get('p8_ids', '')
+
+                p8_ids_list = [
+                    x.strip()
+                    for x in p8_ids.split(',')
+                    if x.strip()
+                ]
+
+                p8_objects = P8ID.objects.filter(
+                    p8_id__in=p8_ids_list
+                )
+
+                p9.p8_ids.set(p8_objects)
+
+                messages.success(
+                    request,
+                    "P9 updated successfully."
+                )
+
+                return redirect('p9_display_list')
 
     else:
 
@@ -928,7 +1090,7 @@ def p9_edit(request, id):
             'p9': p9
         }
     )
-
+    
 @login_required
 @role_required(['admin'])
 # ================= DELETE =================
